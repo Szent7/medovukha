@@ -1,7 +1,7 @@
 package main
 
 import (
-	"medovukha/services"
+	restapi "medovukha/api/rest/v1"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,16 +24,16 @@ func main() {
 	{
 		v1 := rest.Group("/v1")
 		{
-			v1.POST("/createtest", services.CreateTestContainer)
-			v1.POST("/pausecontainerbyid", services.PauseContainerByID)
-			v1.POST("/unpausecontainerbyid", services.UnpauseContainerByID)
+			v1.POST("/createtest", restapi.CreateTestContainer)
+			v1.POST("/pausecontainerbyid", restapi.PauseContainerByID)
+			v1.POST("/unpausecontainerbyid", restapi.UnpauseContainerByID)
 
-			v1.POST("/killcontainerbyid", services.KillContainerByID)
-			v1.POST("/startcontainerbyid", services.StartContainerByID)
+			v1.POST("/killcontainerbyid", restapi.KillContainerByID)
+			v1.POST("/startcontainerbyid", restapi.StartContainerByID)
 
-			v1.POST("/removecontainerbyid", services.RemoveContainerByID)
+			v1.POST("/removecontainerbyid", restapi.RemoveContainerByID)
 
-			v1.GET("/getcontainerlist", services.GetContainerList)
+			v1.GET("/getcontainerlist", restapi.GetContainerList)
 		}
 	}
 

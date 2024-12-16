@@ -2,31 +2,33 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
-	v1 "medovukha/api/rest/v1"
-	"net/http"
+	"medovukha/api/rest/v1/types"
 	"os"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
-	"github.com/gin-gonic/gin"
 )
 
-func GetContainerList(c *gin.Context) {
+func CreateDockerClient() (*client.Client, error) {
+	return client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+}
+
+func GetContainerList(cli *client.Client) ([]types.ContainerBaseInfo, error) {
 	ctx := context.Background()
-	cli := CreateDockerClient()
-	defer cli.Close()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	conList := make([]v1.ContainerBaseInfo, len(containers))
+
+	conList := make([]types.ContainerBaseInfo, len(containers))
 	for i, container := range containers {
-		conList[i] = v1.ContainerBaseInfo{
+		conList[i] = types.ContainerBaseInfo{
 			Id:        container.ID,
 			Names:     container.Names,
 			ImageName: container.Image,
@@ -35,19 +37,18 @@ func GetContainerList(c *gin.Context) {
 			State:     container.State,
 		}
 	}
-	c.IndentedJSON(http.StatusOK, conList)
+
+	return conList, nil
 }
 
-func CreateTestContainer(c *gin.Context) {
+func CreateTestContainer(cli *client.Client) error {
 	ctx := context.Background()
-	cli := CreateDockerClient()
-	defer cli.Close()
 
 	imageName := "docker/welcome-to-docker"
 
 	out, err := cli.ImagePull(ctx, imageName, image.PullOptions{})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer out.Close()
 	io.Copy(os.Stdout, out)
@@ -69,36 +70,27 @@ func CreateTestContainer(c *gin.Context) {
 		Tty:   false,
 	}, hostConfig, nil, nil, "web-test")
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	if err := cli.ContainerStart(ctx, resp.ID, container.StartOptions{}); err != nil {
-		panic(err)
+		return err
 	}
 
 	fmt.Println(resp.ID)
+	return nil
 }
 
-func CreateDockerClient() *client.Client {
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		panic(err)
-	}
-	return cli
-}
-
-func PauseContainerByID(c *gin.Context) {
+func PauseContainerByID(cli *client.Client, id string) error {
 	ctx := context.Background()
-	cli := CreateDockerClient()
-	defer cli.Close()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 	if err != nil {
-		panic(err)
+		return err
 	}
-	conList := make([]v1.ContainerBaseInfo, len(containers))
+	conList := make([]types.ContainerBaseInfo, len(containers))
 	for i, container := range containers {
-		conList[i] = v1.ContainerBaseInfo{
+		conList[i] = types.ContainerBaseInfo{
 			Id:        container.ID,
 			Names:     container.Names,
 			ImageName: container.Image,
@@ -108,37 +100,30 @@ func PauseContainerByID(c *gin.Context) {
 		}
 	}
 
-	var containerId struct {
-		Id string `json:"id"`
-	}
-	if err := c.BindJSON(&containerId); err != nil {
-		return
-	}
-
 	for _, container := range conList {
-		if container.Id == containerId.Id {
+		if container.Id == id {
 			if err := cli.ContainerPause(ctx, container.Id); err != nil {
-				panic(err)
+				return err
 			}
 			fmt.Println("Paused: ", container.Id)
-			return
+			return nil
 		}
 	}
-	fmt.Println("Not found: ", containerId.Id)
+	fmt.Println("Not found: ", id)
+	return errors.New("container not found")
 }
 
-func UnpauseContainerByID(c *gin.Context) {
+func UnpauseContainerByID(cli *client.Client, id string) error {
 	ctx := context.Background()
-	cli := CreateDockerClient()
-	defer cli.Close()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 	if err != nil {
-		panic(err)
+		return err
 	}
-	conList := make([]v1.ContainerBaseInfo, len(containers))
+
+	conList := make([]types.ContainerBaseInfo, len(containers))
 	for i, container := range containers {
-		conList[i] = v1.ContainerBaseInfo{
+		conList[i] = types.ContainerBaseInfo{
 			Id:        container.ID,
 			Names:     container.Names,
 			ImageName: container.Image,
@@ -148,37 +133,30 @@ func UnpauseContainerByID(c *gin.Context) {
 		}
 	}
 
-	var containerId struct {
-		Id string `json:"id"`
-	}
-	if err := c.BindJSON(&containerId); err != nil {
-		return
-	}
-
 	for _, container := range conList {
-		if container.Id == containerId.Id {
+		if container.Id == id {
 			if err := cli.ContainerUnpause(ctx, container.Id); err != nil {
-				panic(err)
+				return err
 			}
 			fmt.Println("Unpaused: ", container.Id)
-			return
+			return nil
 		}
 	}
-	fmt.Println("Not found: ", containerId.Id)
+	fmt.Println("Not found: ", id)
+	return errors.New("container not found")
 }
 
-func KillContainerByID(c *gin.Context) {
+func KillContainerByID(cli *client.Client, id string) error {
 	ctx := context.Background()
-	cli := CreateDockerClient()
-	defer cli.Close()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 	if err != nil {
-		panic(err)
+		return err
 	}
-	conList := make([]v1.ContainerBaseInfo, len(containers))
+
+	conList := make([]types.ContainerBaseInfo, len(containers))
 	for i, container := range containers {
-		conList[i] = v1.ContainerBaseInfo{
+		conList[i] = types.ContainerBaseInfo{
 			Id:        container.ID,
 			Names:     container.Names,
 			ImageName: container.Image,
@@ -186,39 +164,31 @@ func KillContainerByID(c *gin.Context) {
 			Created:   container.Created,
 			State:     container.State,
 		}
-	}
-
-	var containerId struct {
-		Id string `json:"id"`
-	}
-	if err := c.BindJSON(&containerId); err != nil {
-		return
 	}
 
 	for _, container := range conList {
-		if container.Id == containerId.Id {
+		if container.Id == id {
 			if err := cli.ContainerKill(ctx, container.Id, ""); err != nil {
-				panic(err)
+				return err
 			}
 			fmt.Println("Killed: ", container.Id)
-			return
+			return nil
 		}
 	}
-	fmt.Println("Not found: ", containerId.Id)
+	fmt.Println("Not found: ", id)
+	return errors.New("container not found")
 }
 
-func StartContainerByID(c *gin.Context) {
+func StartContainerByID(cli *client.Client, id string) error {
 	ctx := context.Background()
-	cli := CreateDockerClient()
-	defer cli.Close()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 	if err != nil {
-		panic(err)
+		return err
 	}
-	conList := make([]v1.ContainerBaseInfo, len(containers))
+	conList := make([]types.ContainerBaseInfo, len(containers))
 	for i, container := range containers {
-		conList[i] = v1.ContainerBaseInfo{
+		conList[i] = types.ContainerBaseInfo{
 			Id:        container.ID,
 			Names:     container.Names,
 			ImageName: container.Image,
@@ -228,37 +198,29 @@ func StartContainerByID(c *gin.Context) {
 		}
 	}
 
-	var containerId struct {
-		Id string `json:"id"`
-	}
-	if err := c.BindJSON(&containerId); err != nil {
-		return
-	}
-
 	for _, con := range conList {
-		if con.Id == containerId.Id {
+		if con.Id == id {
 			if err := cli.ContainerStart(ctx, con.Id, container.StartOptions{}); err != nil {
-				panic(err)
+				return err
 			}
 			fmt.Println("Started: ", con.Id)
-			return
+			return nil
 		}
 	}
-	fmt.Println("Not found: ", containerId.Id)
+	fmt.Println("Not found: ", id)
+	return errors.New("container not found")
 }
 
-func RemoveContainerByID(c *gin.Context) {
+func RemoveContainerByID(cli *client.Client, id string) error {
 	ctx := context.Background()
-	cli := CreateDockerClient()
-	defer cli.Close()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 	if err != nil {
-		panic(err)
+		return err
 	}
-	conList := make([]v1.ContainerBaseInfo, len(containers))
+	conList := make([]types.ContainerBaseInfo, len(containers))
 	for i, container := range containers {
-		conList[i] = v1.ContainerBaseInfo{
+		conList[i] = types.ContainerBaseInfo{
 			Id:        container.ID,
 			Names:     container.Names,
 			ImageName: container.Image,
@@ -268,34 +230,28 @@ func RemoveContainerByID(c *gin.Context) {
 		}
 	}
 
-	var containerId struct {
-		Id string `json:"id"`
-	}
-	if err := c.BindJSON(&containerId); err != nil {
-		return
-	}
-
 	for _, con := range conList {
-		if con.Id == containerId.Id {
+		if con.Id == id {
 			if err := cli.ContainerRemove(ctx, con.Id, container.RemoveOptions{
 				RemoveVolumes: true,
 				RemoveLinks:   false,
 				Force:         false,
 			}); err != nil {
-				panic(err)
+				return err
 			}
 			fmt.Println("Started: ", con.Id)
-			return
+			return nil
 		}
 	}
-	fmt.Println("Not found: ", containerId.Id)
+	fmt.Println("Not found: ", id)
+	return errors.New("container not found")
 }
 
 /*
-func CopyPorts(ports *[]types.Port) []v1.Ports {
-	newPort := make([]v1.Ports, len(*ports))
+func CopyPorts(ports *[]types.Port) [] types.Ports {
+	newPort := make([] types.Ports, len(*ports))
 	for _, port := range *ports {
-		newPort = append(newPort, v1.Ports{
+		newPort = append(newPort,  types.Ports{
 			Ip:          port.IP,
 			PrivatePort: port.PrivatePort,
 			PublicPort:  port.PublicPort,
