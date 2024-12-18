@@ -1,6 +1,7 @@
 package main
 
 import (
+	"medovukha/api/rest/middlewares"
 	restapi "medovukha/api/rest/v1"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,9 @@ func main() {
 	router.NoRoute(func(c *gin.Context) {
 		c.File("./dist/index.html")
 	})
+
+	//! dev headers
+	router.Use(middlewares.CORSMiddleware())
 
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
