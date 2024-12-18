@@ -1,21 +1,13 @@
 <script lang="ts">
-    import logo from "../assets/logo.svg";
-
     let { content } = $props();
 </script>
 
-<div class="header">
-    <img class="logoHeader" src={logo} alt="logo" />
+<div class="frame-element">
     {@render content?.()}
 </div>
 
 <style>
-    .logoHeader {
-        display: block;
-        max-height: 100px;
-    }
-
-    .header {
+    .frame-element {
         -webkit-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.2);
         -moz-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.2);
         box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.2);
@@ -23,5 +15,6 @@
         margin-left: 15px;
         margin-right: 15px;
         border-radius: 15px;
+        overflow-x: auto;
     }
 </style>

@@ -13,6 +13,6 @@
         background-color: #1c1c1c;
         display: flex;
         flex-direction: column;
-        overflow-y: scroll;
+        overflow-y: auto;
     }
 </style>
