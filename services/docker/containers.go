@@ -1,22 +1,15 @@
-package services
+package docker
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"medovukha/api/rest/v1/types"
-	"os"
 
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
 )
-
-func CreateDockerClient() (*client.Client, error) {
-	return client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-}
 
 func GetContainerList(cli *client.Client) ([]types.ContainerBaseInfo, error) {
 	ctx := context.Background()
@@ -46,12 +39,7 @@ func CreateTestContainer(cli *client.Client) error {
 
 	imageName := "docker/welcome-to-docker"
 
-	out, err := cli.ImagePull(ctx, imageName, image.PullOptions{})
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-	io.Copy(os.Stdout, out)
+	PullImage(cli, ctx, imageName)
 
 	hostConfig := &container.HostConfig{
 		PortBindings: nat.PortMap{
