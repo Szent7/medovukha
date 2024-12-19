@@ -21,4 +21,9 @@
         }),
     );
     export type ContainerBaseInfo = z.infer<typeof ContainerBaseInfoScheme>;
+
+    export const ContainerIdMessageScheme = z.object({
+        Id: z.string(),
+    });
+    export type ContainerIdMessage = z.infer<typeof ContainerIdMessageScheme>;
 </script>
