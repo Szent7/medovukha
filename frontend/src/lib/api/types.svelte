@@ -7,12 +7,14 @@
             Names: z.array(z.string()),
             Image: z.string(),
             Ports: z.array(
-                z.object({
-                    IP: z.string(),
-                    PrivatePort: z.number(),
-                    PublicPort: z.number(),
-                    Type: z.string(),
-                }),
+                z
+                    .object({
+                        IP: z.string(),
+                        PrivatePort: z.number(),
+                        PublicPort: z.number(),
+                        Type: z.string(),
+                    })
+                    .optional(),
             ),
             Created: z.number(),
             State: z.string(),
