@@ -32,7 +32,7 @@ func GetContainerList(c *gin.Context) {
 	}
 	defer cli.Close()
 
-	conList, err := docker.GetContainerList(cli)
+	conList, err := docker.GetContainerBaseInfoList(cli)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "GetContainerList error"})
 		return

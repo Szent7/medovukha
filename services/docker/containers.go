@@ -2,7 +2,6 @@ package docker
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"medovukha/api/rest/v1/types"
 
@@ -10,7 +9,7 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-func GetContainerList(cli IDockerClient) ([]types.ContainerBaseInfo, error) {
+func GetContainerBaseInfoList(cli IDockerClient) ([]types.ContainerBaseInfo, error) {
 	ctx := context.Background()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
@@ -73,24 +72,9 @@ func CreateTestContainer(cli IDockerClient) error {
 func PauseContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
-	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
+	conList, err := GetContainerBaseInfoList(cli)
 	if err != nil {
 		return err
-	}
-	if len(containers) == 0 {
-		return errors.New("container not found")
-	}
-
-	conList := make([]types.ContainerBaseInfo, len(containers))
-	for i, container := range containers {
-		conList[i] = types.ContainerBaseInfo{
-			Id:        container.ID,
-			Names:     container.Names,
-			ImageName: container.Image,
-			Ports:     container.Ports,
-			Created:   container.Created,
-			State:     container.State,
-		}
 	}
 
 	for _, container := range conList {
@@ -103,27 +87,15 @@ func PauseContainerByID(cli IDockerClient, id string) error {
 		}
 	}
 	fmt.Println("Not found: ", id)
-	return errors.New("container not found")
+	return types.ErrContainerNotFound
 }
 
 func UnpauseContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
-	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
+	conList, err := GetContainerBaseInfoList(cli)
 	if err != nil {
 		return err
-	}
-
-	conList := make([]types.ContainerBaseInfo, len(containers))
-	for i, container := range containers {
-		conList[i] = types.ContainerBaseInfo{
-			Id:        container.ID,
-			Names:     container.Names,
-			ImageName: container.Image,
-			Ports:     container.Ports,
-			Created:   container.Created,
-			State:     container.State,
-		}
 	}
 
 	for _, container := range conList {
@@ -136,27 +108,15 @@ func UnpauseContainerByID(cli IDockerClient, id string) error {
 		}
 	}
 	fmt.Println("Not found: ", id)
-	return errors.New("container not found")
+	return types.ErrContainerNotFound
 }
 
 func KillContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
-	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
+	conList, err := GetContainerBaseInfoList(cli)
 	if err != nil {
 		return err
-	}
-
-	conList := make([]types.ContainerBaseInfo, len(containers))
-	for i, container := range containers {
-		conList[i] = types.ContainerBaseInfo{
-			Id:        container.ID,
-			Names:     container.Names,
-			ImageName: container.Image,
-			Ports:     container.Ports,
-			Created:   container.Created,
-			State:     container.State,
-		}
 	}
 
 	for _, container := range conList {
@@ -169,26 +129,15 @@ func KillContainerByID(cli IDockerClient, id string) error {
 		}
 	}
 	fmt.Println("Not found: ", id)
-	return errors.New("container not found")
+	return types.ErrContainerNotFound
 }
 
 func StartContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
-	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
+	conList, err := GetContainerBaseInfoList(cli)
 	if err != nil {
 		return err
-	}
-	conList := make([]types.ContainerBaseInfo, len(containers))
-	for i, container := range containers {
-		conList[i] = types.ContainerBaseInfo{
-			Id:        container.ID,
-			Names:     container.Names,
-			ImageName: container.Image,
-			Ports:     container.Ports,
-			Created:   container.Created,
-			State:     container.State,
-		}
 	}
 
 	for _, con := range conList {
@@ -201,26 +150,15 @@ func StartContainerByID(cli IDockerClient, id string) error {
 		}
 	}
 	fmt.Println("Not found: ", id)
-	return errors.New("container not found")
+	return types.ErrContainerNotFound
 }
 
 func RemoveContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
-	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
+	conList, err := GetContainerBaseInfoList(cli)
 	if err != nil {
 		return err
-	}
-	conList := make([]types.ContainerBaseInfo, len(containers))
-	for i, container := range containers {
-		conList[i] = types.ContainerBaseInfo{
-			Id:        container.ID,
-			Names:     container.Names,
-			ImageName: container.Image,
-			Ports:     container.Ports,
-			Created:   container.Created,
-			State:     container.State,
-		}
 	}
 
 	for _, con := range conList {
@@ -237,20 +175,5 @@ func RemoveContainerByID(cli IDockerClient, id string) error {
 		}
 	}
 	fmt.Println("Not found: ", id)
-	return errors.New("container not found")
+	return types.ErrContainerNotFound
 }
-
-/*
-func CopyPorts(ports *[]types.Port) [] types.Ports {
-	newPort := make([] types.Ports, len(*ports))
-	for _, port := range *ports {
-		newPort = append(newPort,  types.Ports{
-			Ip:          port.IP,
-			PrivatePort: port.PrivatePort,
-			PublicPort:  port.PublicPort,
-			Type:        port.Type,
-		})
-	}
-	return newPort
-}
-*/

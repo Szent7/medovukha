@@ -81,7 +81,7 @@ func TestCreateTestContainer(t *testing.T) {
 	mockClient.AssertExpectations(t)
 }
 
-func TestGetContainerList(t *testing.T) {
+func TestGetContainerBaseInfoList(t *testing.T) {
 	mockClient := new(MockDockerClient)
 
 	// test: container found
@@ -89,7 +89,7 @@ func TestGetContainerList(t *testing.T) {
 		{ID: "1234567890ab"},
 	}, nil).Once()
 
-	result, err := GetContainerList(mockClient)
+	result, err := GetContainerBaseInfoList(mockClient)
 	assert.Equal(t, []ts.ContainerBaseInfo{{Id: "1234567890ab"}}, result)
 	assert.Nil(t, err)
 	mockClient.AssertExpectations(t)
@@ -97,7 +97,7 @@ func TestGetContainerList(t *testing.T) {
 	// test: container list empty
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{}, nil).Once()
 
-	result, err = GetContainerList(mockClient)
+	result, err = GetContainerBaseInfoList(mockClient)
 	assert.Equal(t, []ts.ContainerBaseInfo{}, result)
 	assert.Nil(t, err)
 	mockClient.AssertExpectations(t)
@@ -105,7 +105,7 @@ func TestGetContainerList(t *testing.T) {
 	// test: ContainerList throw error
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{}, errors.New("ContainerList error")).Once()
 
-	result, err = GetContainerList(mockClient)
+	result, err = GetContainerBaseInfoList(mockClient)
 	assert.Nil(t, result)
 	assert.EqualError(t, err, "ContainerList error")
 	mockClient.AssertExpectations(t)
@@ -128,7 +128,7 @@ func TestPauseContainerByID(t *testing.T) {
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{}, nil).Once()
 
 	err = PauseContainerByID(mockClient, "1234567890ab")
-	assert.EqualError(t, err, "container not found")
+	assert.EqualError(t, err, ts.ErrContainerNotFound.Error())
 	mockClient.AssertExpectations(t)
 
 	// test: ContainerList throw error
@@ -166,7 +166,7 @@ func TestUnpauseContainerByID(t *testing.T) {
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{}, nil).Once()
 
 	err = UnpauseContainerByID(mockClient, "1234567890ab")
-	assert.EqualError(t, err, "container not found")
+	assert.EqualError(t, err, ts.ErrContainerNotFound.Error())
 	mockClient.AssertExpectations(t)
 
 	// test: ContainerList throw error
@@ -204,7 +204,7 @@ func TestKillContainerByID(t *testing.T) {
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{}, nil).Once()
 
 	err = KillContainerByID(mockClient, "1234567890ab")
-	assert.EqualError(t, err, "container not found")
+	assert.EqualError(t, err, ts.ErrContainerNotFound.Error())
 	mockClient.AssertExpectations(t)
 
 	// test: ContainerList throw error
@@ -242,7 +242,7 @@ func TestStartContainerByID(t *testing.T) {
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{}, nil).Once()
 
 	err = StartContainerByID(mockClient, "1234567890ab")
-	assert.EqualError(t, err, "container not found")
+	assert.EqualError(t, err, ts.ErrContainerNotFound.Error())
 	mockClient.AssertExpectations(t)
 
 	// test: ContainerList throw error
@@ -284,7 +284,7 @@ func TestRemoveContainerByID(t *testing.T) {
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{}, nil).Once()
 
 	err = RemoveContainerByID(mockClient, "1234567890ab")
-	assert.EqualError(t, err, "container not found")
+	assert.EqualError(t, err, ts.ErrContainerNotFound.Error())
 	mockClient.AssertExpectations(t)
 
 	// test: ContainerList throw error
