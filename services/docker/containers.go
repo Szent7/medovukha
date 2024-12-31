@@ -7,11 +7,10 @@ import (
 	"medovukha/api/rest/v1/types"
 
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
 )
 
-func GetContainerList(cli *client.Client) ([]types.ContainerBaseInfo, error) {
+func GetContainerList(cli IDockerClient) ([]types.ContainerBaseInfo, error) {
 	ctx := context.Background()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
@@ -34,20 +33,22 @@ func GetContainerList(cli *client.Client) ([]types.ContainerBaseInfo, error) {
 	return conList, nil
 }
 
-func CreateTestContainer(cli *client.Client) error {
+func CreateTestContainer(cli IDockerClient) error {
 	ctx := context.Background()
 
 	imageName := "docker/welcome-to-docker"
 
-	PullImage(cli, ctx, imageName)
+	if err := PullImage(cli, ctx, imageName); err != nil {
+		return err
+	}
 
 	hostConfig := &container.HostConfig{
 		PortBindings: nat.PortMap{
-			// 80 - изначальный порт welcome-to-docker
+			// original port
 			"80/tcp": []nat.PortBinding{
 				{
 					HostIP:   "0.0.0.0",
-					HostPort: "9990", // новый порт
+					HostPort: "9990", // new port
 				},
 			},
 		},
@@ -69,13 +70,17 @@ func CreateTestContainer(cli *client.Client) error {
 	return nil
 }
 
-func PauseContainerByID(cli *client.Client, id string) error {
+func PauseContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 	if err != nil {
 		return err
 	}
+	if len(containers) == 0 {
+		return errors.New("container not found")
+	}
+
 	conList := make([]types.ContainerBaseInfo, len(containers))
 	for i, container := range containers {
 		conList[i] = types.ContainerBaseInfo{
@@ -101,7 +106,7 @@ func PauseContainerByID(cli *client.Client, id string) error {
 	return errors.New("container not found")
 }
 
-func UnpauseContainerByID(cli *client.Client, id string) error {
+func UnpauseContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
@@ -134,7 +139,7 @@ func UnpauseContainerByID(cli *client.Client, id string) error {
 	return errors.New("container not found")
 }
 
-func KillContainerByID(cli *client.Client, id string) error {
+func KillContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
@@ -167,7 +172,7 @@ func KillContainerByID(cli *client.Client, id string) error {
 	return errors.New("container not found")
 }
 
-func StartContainerByID(cli *client.Client, id string) error {
+func StartContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
@@ -199,7 +204,7 @@ func StartContainerByID(cli *client.Client, id string) error {
 	return errors.New("container not found")
 }
 
-func RemoveContainerByID(cli *client.Client, id string) error {
+func RemoveContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
