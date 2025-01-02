@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"medovukha/api/rest/v1/types"
+	"os"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
@@ -176,4 +177,15 @@ func RemoveContainerByID(cli IDockerClient, id string) error {
 	}
 	fmt.Println("Not found: ", id)
 	return types.ErrContainerNotFound
+}
+
+func CheckIsMedovukhaId(id string) (bool, error) {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return false, err
+	}
+	if id == hostname {
+		return true, nil
+	}
+	return false, nil
 }

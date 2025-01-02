@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	ts "medovukha/api/rest/v1/types"
+	"os"
 	"strings"
 	"testing"
 
@@ -307,4 +308,16 @@ func TestRemoveContainerByID(t *testing.T) {
 	err = RemoveContainerByID(mockClient, "1234567890ab")
 	assert.EqualError(t, err, "ContainerRemove error")
 	mockClient.AssertExpectations(t)
+}
+
+func TestCheckIsMedovukhaId(t *testing.T) {
+	hn, _ := os.Hostname()
+
+	result, err := CheckIsMedovukhaId(hn)
+	assert.NoError(t, err)
+	assert.Equal(t, true, result)
+
+	result, err = CheckIsMedovukhaId("someId:1234567890ab")
+	assert.NoError(t, err)
+	assert.Equal(t, false, result)
 }
