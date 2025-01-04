@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"medovukha/api/rest/v1/types"
 	"os"
+	"strings"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
@@ -27,6 +28,11 @@ func GetContainerBaseInfoList(cli IDockerClient) ([]types.ContainerBaseInfo, err
 			Ports:     container.Ports,
 			Created:   container.Created,
 			State:     container.State,
+		}
+		if check, err := CheckIsMedovukhaId(conList[i].Id); err != nil {
+			return nil, err
+		} else {
+			conList[i].IsMedovukha = check
 		}
 	}
 
@@ -184,7 +190,10 @@ func CheckIsMedovukhaId(id string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if id == hostname {
+	//the hostname is part of the full container ID
+	contains := strings.Contains(id, hostname)
+	i := strings.Index(id, hostname)
+	if contains && i == 0 {
 		return true, nil
 	}
 	return false, nil

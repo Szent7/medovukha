@@ -313,11 +313,15 @@ func TestRemoveContainerByID(t *testing.T) {
 func TestCheckIsMedovukhaId(t *testing.T) {
 	hn, _ := os.Hostname()
 
-	result, err := CheckIsMedovukhaId(hn)
+	result, err := CheckIsMedovukhaId(hn + "hgklj56j3o4i6oj5i7jo")
 	assert.NoError(t, err)
 	assert.Equal(t, true, result)
 
-	result, err = CheckIsMedovukhaId("someId:1234567890ab")
+	result, err = CheckIsMedovukhaId("3gfj4u64u" + hn + "hfh55ey")
+	assert.NoError(t, err)
+	assert.Equal(t, false, result)
+
+	result, err = CheckIsMedovukhaId("1234567890ab")
 	assert.NoError(t, err)
 	assert.Equal(t, false, result)
 }
