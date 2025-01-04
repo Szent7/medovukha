@@ -18,6 +18,7 @@
             ),
             Created: z.number(),
             State: z.string(),
+            IsMedovukha: z.boolean(),
         }),
     );
     export type ContainerBaseInfo = z.infer<typeof ContainerBaseInfoScheme>;
