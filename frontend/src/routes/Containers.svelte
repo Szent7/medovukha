@@ -3,7 +3,7 @@
     import FrameElement from "../templates/frameElement.svelte";
     import Sidebar from "../templates/sidebar.svelte";
     import Frame from "../templates/frame.svelte";
-    import logo from "../assets/logo.svg";
+    import logo from "../assets/logo_small.svg";
     import { GetContainerList } from "../lib/api/api.svelte";
     import type { ContainerBaseInfo } from "../lib/api/types.svelte";
     import { UnixTimeFormat } from "../lib/time.svelte";
@@ -20,15 +20,29 @@
     let conList: ContainerBaseInfo = [];
     let loading = true;
     let selectedIds: string[] = [];
-    const buttonIds: string[] = [
-        "start-button",
-        "stop-button",
-        "kill-button",
-        "restart-button",
-        "pause-button",
-        "resume-button",
-        "remove-button",
-    ];
+    let buttonIds = new Map<string, boolean>([
+        ["start-button", false],
+        ["stop-button", false],
+        ["kill-button", false],
+        ["restart-button", false],
+        ["pause-button", false],
+        ["resume-button", false],
+        ["remove-button", false],
+    ]);
+    let stateList = new Map<string, boolean>([
+        ["running", false],
+        ["paused", false],
+        ["exited", false],
+    ]);
+    let uniqueStates: string[] = [];
+    const actionsBlacklist = new Map<string, string[]>([
+        ["running", ["start-button", "resume-button"]],
+        ["paused", ["start-button", "stop-button", "pause-button"]],
+        [
+            "exited",
+            ["stop-button", "kill-button", "pause-button", "resume-button"],
+        ],
+    ]);
     let activateButtons: boolean = false;
 
     const updateContainerList = () => {
@@ -37,13 +51,12 @@
                 const data = await GetContainerList();
                 if (data) {
                     conList = data;
-                    console.log("data:" + data);
                 }
             } catch (err) {
                 console.log(err);
             } finally {
                 loading = false;
-                console.log(loading + "\nconList:" + JSON.stringify(conList));
+                //console.log(loading + "\nconList:" + JSON.stringify(conList));
             }
         };
         getData();
@@ -51,42 +64,116 @@
 
     onMount(updateContainerList);
 
+    function CheckIsMedovukha(id: string): boolean {
+        let isMedovukha: boolean = false;
+        conList.forEach((container) => {
+            if (container.id == id) {
+                isMedovukha = container.IsMedovukha;
+                return;
+            }
+        });
+        return isMedovukha;
+    }
+
+    function updateButtons() {
+        buttonIds.forEach((value: boolean, key: string) => {
+            const button = document.getElementById(
+                key,
+            ) as HTMLButtonElement | null;
+            if (button !== null) {
+                button.disabled = value;
+            }
+        });
+    }
+
+    function updateStateList() {
+        if (selectedIds.length == 0) {
+            stateList.forEach((_: boolean, key: string) => {
+                stateList.set(key, false);
+                //console.log("stateList: ", key, ":", false);
+            });
+            buttonIds.forEach((_: boolean, key: string) => {
+                buttonIds.set(key, true);
+            });
+            updateButtons();
+            uniqueStates = [];
+            return;
+        }
+        let states: string[] = new Array<string>(selectedIds.length);
+        for (let i = 0; i < selectedIds.length; i++) {
+            for (let j = 0; j < conList.length; j++) {
+                if (selectedIds[i] == conList[j].id) {
+                    states[i] = conList[j].State;
+                }
+            }
+        }
+        const newUniqueStates = Array.from(new Set(states));
+        if (newUniqueStates.length != uniqueStates.length) {
+            uniqueStates = newUniqueStates;
+            buttonIds.forEach((_: boolean, key: string) => {
+                buttonIds.set(key, false);
+            });
+            uniqueStates.forEach((item) => {
+                const blackList = actionsBlacklist.get(item);
+                if (blackList !== undefined) {
+                    blackList.forEach((item) => {
+                        buttonIds.set(item, true);
+                    });
+                }
+            });
+            updateButtons();
+        }
+    }
+
     function updateSelected(id: string, checked: boolean) {
         if (checked) {
             selectedIds = [...selectedIds, id];
+            updateStateList();
+            const elements = document.querySelectorAll(
+                "input[name=checkbox-item]",
+            );
+            if (elements.length - 1 == selectedIds.length) {
+                const checkboxAll = document.querySelector(
+                    'input[name="checkbox-item-all"]',
+                ) as HTMLInputElement;
+                if (checkboxAll !== null) {
+                    checkboxAll.checked = checked;
+                }
+            }
             if (!activateButtons) {
-                buttonIds.forEach((item: string): void => {
-                    const button = document.getElementById(
-                        item,
-                    ) as HTMLButtonElement | null;
-                    if (button !== null) {
-                        button.disabled = false;
-                    }
+                /*buttonIds.forEach((_: boolean, key: string) => {
+                    buttonIds.set(key, false);
                 });
+                updateButtons();*/
+                updateStateList();
                 activateButtons = true;
             }
         } else {
             selectedIds = selectedIds.filter((item) => item !== id);
+            updateStateList();
             if (selectedIds.length == 0) {
-                buttonIds.forEach((item: string): void => {
-                    const button = document.getElementById(
-                        item,
-                    ) as HTMLButtonElement | null;
-                    if (button !== null) {
-                        button.disabled = true;
-                    }
+                /*buttonIds.forEach((_: boolean, key: string) => {
+                    buttonIds.set(key, true);
                 });
+                updateButtons();*/
+                updateStateList();
                 activateButtons = false;
             }
+            const checkboxAll = document.querySelector(
+                'input[name="checkbox-item-all"]',
+            ) as HTMLInputElement;
+            if (checkboxAll !== null) {
+                checkboxAll.checked = checked;
+            }
         }
-        console.log("SelectedIds:" + selectedIds);
+        //console.log("SelectedIds:" + selectedIds);
     }
 
     function selectAll(checked: boolean) {
         const elements = document.querySelectorAll("input[name=checkbox-item]");
         if (elements !== null) {
             Array.prototype.forEach.call(elements, function (item) {
-                if (item.checked != checked) {
+                if (!CheckIsMedovukha(item.id) && item.checked != checked) {
                     updateSelected(item.id, checked);
                     item.checked = checked;
                 }
@@ -211,15 +298,16 @@
     <table class="containerlist-table">
         <thead>
             <tr>
-                <th
-                    ><input
+                <th>
+                    <input
                         type="checkbox"
+                        name="checkbox-item-all"
                         onchange={(event) => {
                             const target = event.target as HTMLInputElement;
                             selectAll(target.checked);
                         }}
-                    /></th
-                >
+                    />
+                </th>
                 <th>Name</th>
                 <th>State</th>
                 <th>Image</th>
@@ -230,22 +318,35 @@
         <tbody>
             {#each conList as container}
                 <tr>
-                    <td
-                        ><input
-                            type="checkbox"
-                            name="checkbox-item"
-                            id={container.id}
-                            onchange={(event) => {
-                                const target = event.target as HTMLInputElement;
-                                updateSelected(container.id, target.checked);
-                            }}
-                        /></td
-                    >
+                    <td>
+                        {#if container.IsMedovukha}
+                            <input
+                                type="checkbox"
+                                name="checkbox-item"
+                                id={container.id}
+                                disabled
+                            />
+                        {:else}
+                            <input
+                                type="checkbox"
+                                name="checkbox-item"
+                                id={container.id}
+                                onchange={(event) => {
+                                    const target =
+                                        event.target as HTMLInputElement;
+                                    updateSelected(
+                                        container.id,
+                                        target.checked,
+                                    );
+                                }}
+                            />
+                        {/if}
+                    </td>
                     <td>{container.Names[0]}</td>
                     <td class="state-{container.State}">{container.State}</td>
                     <td>{container.Image}</td>
-                    <td
-                        >{#if container.Ports.length == 0}
+                    <td>
+                        {#if container.Ports.length == 0}
                             -
                         {:else}
                             {#each container.Ports as port}
@@ -255,8 +356,8 @@
                                     -
                                 {/if}
                             {/each}
-                        {/if}</td
-                    >
+                        {/if}
+                    </td>
                     <td>{UnixTimeFormat(container.Created)}</td>
                 </tr>
             {/each}

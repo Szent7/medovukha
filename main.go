@@ -37,6 +37,10 @@ func main() {
 
 			v1.POST("/removecontainerbyid", restapi.RemoveContainerByID)
 
+			v1.POST("/stopcontainerbyid", restapi.StopContainerByID)
+
+			v1.POST("/restartcontainerbyid", restapi.RestartContainerByID)
+
 			v1.GET("/getcontainerlist", restapi.GetContainerList)
 		}
 	}
