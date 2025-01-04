@@ -95,6 +95,11 @@
     }
 </script>
 
+<svelte:head>
+    <title>Containers</title>
+    <link rel="icon" type="image/svg+xml" href={logo} />
+</svelte:head>
+
 <Sidebar />
 <Frame {content} />
 
