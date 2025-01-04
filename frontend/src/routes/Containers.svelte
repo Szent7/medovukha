@@ -13,6 +13,8 @@
         RemoveContainer,
         StartContainer,
         UnpauseContainer,
+        StopContainer,
+        RestartContainer,
     } from "../lib/containerActions.svelte";
 
     let conList: ContainerBaseInfo = [];
@@ -121,6 +123,7 @@
             id="start-button"
             onclick={() => {
                 StartContainer(selectedIds);
+                selectAll(false);
                 setTimeout(() => {
                     updateContainerList();
                 }, 1000);
@@ -131,7 +134,11 @@
             class="containerlist-button"
             id="stop-button"
             onclick={() => {
-                //StopContainer(selectedIds);
+                StopContainer(selectedIds);
+                selectAll(false);
+                setTimeout(() => {
+                    updateContainerList();
+                }, 1000);
             }}
             disabled>Stop</button
         >
@@ -140,6 +147,7 @@
             id="kill-button"
             onclick={() => {
                 KillContainer(selectedIds);
+                selectAll(false);
                 setTimeout(() => {
                     updateContainerList();
                 }, 1000);
@@ -150,7 +158,11 @@
             class="containerlist-button"
             id="restart-button"
             onclick={() => {
-                //RestartContainer(selectedIds);
+                RestartContainer(selectedIds);
+                selectAll(false);
+                setTimeout(() => {
+                    updateContainerList();
+                }, 1000);
             }}
             disabled>Restart</button
         >
@@ -159,6 +171,7 @@
             id="pause-button"
             onclick={() => {
                 PauseContainer(selectedIds);
+                selectAll(false);
                 setTimeout(() => {
                     updateContainerList();
                 }, 1000);
@@ -170,6 +183,7 @@
             id="resume-button"
             onclick={() => {
                 UnpauseContainer(selectedIds);
+                selectAll(false);
                 setTimeout(() => {
                     updateContainerList();
                 }, 1000);
@@ -181,6 +195,7 @@
             id="remove-button"
             onclick={() => {
                 RemoveContainer(selectedIds);
+                selectAll(false);
                 setTimeout(() => {
                     updateContainerList();
                 }, 1000);

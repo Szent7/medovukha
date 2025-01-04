@@ -69,7 +69,7 @@ func PauseContainerByID(c *gin.Context) {
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "Stopped: " + containerId.Id})
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Paused: " + containerId.Id})
 }
 
 func UnpauseContainerByID(c *gin.Context) {
@@ -96,6 +96,36 @@ func UnpauseContainerByID(c *gin.Context) {
 
 	if err := docker.UnpauseContainerByID(cli, containerId.Id); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "PauseContainerByID error"})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Unpaused: " + containerId.Id})
+}
+
+func StopContainerByID(c *gin.Context) {
+	var containerId struct {
+		Id string `json:"id"`
+	}
+	if err := c.BindJSON(&containerId); err != nil {
+		return
+	}
+
+	if check, err := docker.CheckIsMedovukhaId(containerId.Id); err != nil {
+		return
+	} else if check {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": types.ErrContainerIsMedovukha.Error()})
+		return
+	}
+
+	cli, err := docker.CreateDockerClient()
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		return
+	}
+	defer cli.Close()
+
+	if err := docker.StopContainerByID(cli, containerId.Id); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "StopContainerByID error"})
 		return
 	}
 
@@ -159,7 +189,37 @@ func StartContainerByID(c *gin.Context) {
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "started: " + containerId.Id})
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Started: " + containerId.Id})
+}
+
+func RestartContainerByID(c *gin.Context) {
+	var containerId struct {
+		Id string `json:"id"`
+	}
+	if err := c.BindJSON(&containerId); err != nil {
+		return
+	}
+
+	if check, err := docker.CheckIsMedovukhaId(containerId.Id); err != nil {
+		return
+	} else if check {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": types.ErrContainerIsMedovukha.Error()})
+		return
+	}
+
+	cli, err := docker.CreateDockerClient()
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		return
+	}
+	defer cli.Close()
+
+	if err := docker.RestartContainerByID(cli, containerId.Id); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "RestartContainerByID error"})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Restarted: " + containerId.Id})
 }
 
 func RemoveContainerByID(c *gin.Context) {
@@ -189,5 +249,5 @@ func RemoveContainerByID(c *gin.Context) {
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "removed: " + containerId.Id})
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Removed: " + containerId.Id})
 }

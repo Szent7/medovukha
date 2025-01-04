@@ -20,7 +20,7 @@
             const containers: ContainerBaseInfo = ContainerBaseInfoScheme.parse(
                 response.data,
             );
-            console.log("responseData:" + containers);
+            //console.log("responseData:" + containers);
             return containers;
         } catch (error) {
             console.error("Error GET ContainerList:", error);
@@ -81,6 +81,44 @@
             return containers;*/
         } catch (error) {
             console.error("Error POST StartContainerById:", error);
+        }
+    }
+
+    export async function RestartContainerById(id: string) {
+        const container: ContainerIdMessage = {
+            Id: id,
+        };
+        try {
+            const response = await axios.post(
+                "http://localhost:10015/rest/v1/restartcontainerbyid",
+                container,
+            );
+            /*const containers: ContainerBaseInfo = ContainerBaseInfoScheme.parse(
+                response.data,
+            );
+            console.log("responseData:" + containers);
+            return containers;*/
+        } catch (error) {
+            console.error("Error POST RestartContainerById:", error);
+        }
+    }
+
+    export async function StopContainerById(id: string) {
+        const container: ContainerIdMessage = {
+            Id: id,
+        };
+        try {
+            const response = await axios.post(
+                "http://localhost:10015/rest/v1/stopcontainerbyid",
+                container,
+            );
+            /*const containers: ContainerBaseInfo = ContainerBaseInfoScheme.parse(
+                response.data,
+            );
+            console.log("responseData:" + containers);
+            return containers;*/
+        } catch (error) {
+            console.error("Error POST StopContainerById:", error);
         }
     }
 

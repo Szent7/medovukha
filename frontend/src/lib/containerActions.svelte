@@ -5,6 +5,8 @@
         StartContainerById,
         UnpauseContainerById,
         RemoveContainerById,
+        StopContainerById,
+        RestartContainerById,
     } from "./api/api.svelte";
 
     export function StartContainer(ids: string[]) {
@@ -28,6 +30,18 @@
     export function KillContainer(ids: string[]) {
         ids.forEach((id: string): void => {
             KillContainerById(id);
+        });
+    }
+
+    export function StopContainer(ids: string[]) {
+        ids.forEach((id: string): void => {
+            StopContainerById(id);
+        });
+    }
+
+    export function RestartContainer(ids: string[]) {
+        ids.forEach((id: string): void => {
+            RestartContainerById(id);
         });
     }
 
