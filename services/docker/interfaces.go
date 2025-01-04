@@ -27,4 +27,8 @@ type IDockerClient interface {
 	ContainerKill(ctx context.Context, containerID, signal string) error
 
 	ContainerRemove(ctx context.Context, containerID string, options container.RemoveOptions) error
+
+	ContainerRestart(ctx context.Context, containerID string, options container.StopOptions) error
+
+	ContainerStop(ctx context.Context, containerID string, options container.StopOptions) error
 }

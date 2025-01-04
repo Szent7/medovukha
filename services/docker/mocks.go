@@ -55,3 +55,13 @@ func (m *MockDockerClient) ContainerRemove(ctx context.Context, containerID stri
 	args := m.Called(ctx, containerID, options)
 	return args.Error(0)
 }
+
+func (m *MockDockerClient) ContainerRestart(ctx context.Context, containerID string, options container.StopOptions) error {
+	args := m.Called(ctx, containerID, options)
+	return args.Error(0)
+}
+
+func (m *MockDockerClient) ContainerStop(ctx context.Context, containerID string, options container.StopOptions) error {
+	args := m.Called(ctx, containerID, options)
+	return args.Error(0)
+}

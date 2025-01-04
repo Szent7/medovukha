@@ -160,6 +160,48 @@ func StartContainerByID(cli IDockerClient, id string) error {
 	return types.ErrContainerNotFound
 }
 
+func RestartContainerByID(cli IDockerClient, id string) error {
+	ctx := context.Background()
+
+	conList, err := GetContainerBaseInfoList(cli)
+	if err != nil {
+		return err
+	}
+
+	for _, con := range conList {
+		if con.Id == id {
+			if err := cli.ContainerRestart(ctx, con.Id, container.StopOptions{}); err != nil {
+				return err
+			}
+			fmt.Println("Restarted: ", con.Id)
+			return nil
+		}
+	}
+	fmt.Println("Not found: ", id)
+	return types.ErrContainerNotFound
+}
+
+func StopContainerByID(cli IDockerClient, id string) error {
+	ctx := context.Background()
+
+	conList, err := GetContainerBaseInfoList(cli)
+	if err != nil {
+		return err
+	}
+
+	for _, con := range conList {
+		if con.Id == id {
+			if err := cli.ContainerStop(ctx, con.Id, container.StopOptions{}); err != nil {
+				return err
+			}
+			fmt.Println("Stopped: ", con.Id)
+			return nil
+		}
+	}
+	fmt.Println("Not found: ", id)
+	return types.ErrContainerNotFound
+}
+
 func RemoveContainerByID(cli IDockerClient, id string) error {
 	ctx := context.Background()
 
