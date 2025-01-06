@@ -1,5 +1,5 @@
 FROM node:alpine AS frontend-builder
-WORKDIR /build
+WORKDIR /frontend
 ADD ./frontend/package.json .
 ADD ./frontend/package-lock.json .
 RUN npm install
@@ -10,13 +10,13 @@ FROM golang:alpine AS backend-builder
 WORKDIR /build
 ADD go.mod .
 COPY . .
-RUN go build -o main main.go 
+RUN CGO_ENABLED=0 GOOS=linux go build -o main main.go 
 
 FROM alpine
-WORKDIR /build/dist
-COPY --from=frontend-builder /build/dist /build/dist/
-WORKDIR /build
-COPY --from=backend-builder /build/main /build/main
+WORKDIR /app/build
+COPY --from=frontend-builder /frontend/build /app/build/
+WORKDIR /app
+COPY --from=backend-builder /build/main /app/main
 
 EXPOSE 10015
 

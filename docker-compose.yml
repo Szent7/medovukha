@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  medovukha-api:
+  medovukha:
     build: .
     ports:
       - "10015:10015"

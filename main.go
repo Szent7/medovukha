@@ -10,9 +10,9 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.Static("/assets", "./dist/assets")
+	router.Static("/_app/immutable/", "./build/_app/immutable/")
 	router.NoRoute(func(c *gin.Context) {
-		c.File("./dist/index.html")
+		c.File("./build/index.html")
 	})
 
 	//! dev headers
