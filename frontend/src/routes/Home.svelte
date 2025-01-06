@@ -3,7 +3,6 @@
     import Sidebar from "../templates/sidebar.svelte";
     import Frame from "../templates/frame.svelte";
     import logo from "../assets/logo_small.svg";
-    import { PingBack } from "../lib/api/api.svelte";
 </script>
 
 <Sidebar />
@@ -16,23 +15,35 @@
 
 {#snippet header()}
     <img class="logoHeader" src={logo} alt="logo" />
-    <p>Home page</p>
-    <p>Home page</p>
-    <p>Home page</p>
-    <p>Home page</p>
-    <p>Home page</p>
-    <p>Home page</p>
-    <button on:click={() => PingBack()}>PING</button>
+    <h2>Medovukha panel</h2>
+    <div class="releaseLabel">Alpha v0.0.1</div>
 {/snippet}
 
 {#snippet content()}
-    <FrameElement content={header} />
-    <FrameElement content={header} />
+    <FrameElement
+        --display="flex"
+        --justify-content="space-between"
+        --align-items="center"
+        content={header}
+    />
 {/snippet}
 
 <style>
     .logoHeader {
         display: block;
         max-height: 100px;
+    }
+
+    .releaseLabel {
+        background-color: #ffffff;
+        color: #1c1c1c;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 14pt;
+        font-weight: bold;
+    }
+
+    h2 {
+        font-size: 24pt;
     }
 </style>

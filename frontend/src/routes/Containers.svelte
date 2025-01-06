@@ -180,6 +180,22 @@
             });
         }
     }
+
+    function refreshButtonEvent() {
+        const refreshButton = document.getElementById(
+            "refresh-button",
+        ) as HTMLButtonElement | null;
+        if (refreshButton !== null) {
+            const originalText = refreshButton.innerHTML;
+            refreshButton.disabled = true;
+            refreshButton.innerHTML = "Refreshing";
+
+            setTimeout(() => {
+                refreshButton.disabled = false;
+                refreshButton.innerHTML = originalText;
+            }, 1000);
+        }
+    }
 </script>
 
 <svelte:head>
@@ -191,7 +207,12 @@
 <Frame {content} />
 
 {#snippet content()}
-    <FrameElement content={header} />
+    <FrameElement
+        --display="flex"
+        --justify-content="space-between"
+        --align-items="center"
+        content={header}
+    />
     {#if loading}
         <FrameElement content={loadingData} />
     {:else if !loading}
@@ -205,95 +226,109 @@
 
 {#snippet header()}
     <img class="logoHeader" src={logo} alt="logo" />
-    <p>Container page</p>
+    <h2>Container page</h2>
+    <div class="releaseLabel">Alpha v0.0.1</div>
 {/snippet}
 
 {#snippet containerTable()}
     <div class="button-block">
-        <button
-            class="containerlist-button"
-            id="start-button"
-            onclick={() => {
-                StartContainer(selectedIds);
-                selectAll(false);
-                setTimeout(() => {
+        <div class="button-block-left">
+            <button
+                id="refresh-button"
+                onclick={(event) => {
+                    selectAll(false);
+                    refreshButtonEvent();
                     updateContainerList();
-                }, 1000);
-            }}
-            disabled>Start</button
-        >
-        <button
-            class="containerlist-button"
-            id="stop-button"
-            onclick={() => {
-                StopContainer(selectedIds);
-                selectAll(false);
-                setTimeout(() => {
-                    updateContainerList();
-                }, 1000);
-            }}
-            disabled>Stop</button
-        >
-        <button
-            class="containerlist-button"
-            id="kill-button"
-            onclick={() => {
-                KillContainer(selectedIds);
-                selectAll(false);
-                setTimeout(() => {
-                    updateContainerList();
-                }, 1000);
-            }}
-            disabled>Kill</button
-        >
-        <button
-            class="containerlist-button"
-            id="restart-button"
-            onclick={() => {
-                RestartContainer(selectedIds);
-                selectAll(false);
-                setTimeout(() => {
-                    updateContainerList();
-                }, 1000);
-            }}
-            disabled>Restart</button
-        >
-        <button
-            class="containerlist-button"
-            id="pause-button"
-            onclick={() => {
-                PauseContainer(selectedIds);
-                selectAll(false);
-                setTimeout(() => {
-                    updateContainerList();
-                }, 1000);
-            }}
-            disabled>Pause</button
-        >
-        <button
-            class="containerlist-button"
-            id="resume-button"
-            onclick={() => {
-                UnpauseContainer(selectedIds);
-                selectAll(false);
-                setTimeout(() => {
-                    updateContainerList();
-                }, 1000);
-            }}
-            disabled>Resume</button
-        >
-        <button
-            class="containerlist-button"
-            id="remove-button"
-            onclick={() => {
-                RemoveContainer(selectedIds);
-                selectAll(false);
-                setTimeout(() => {
-                    updateContainerList();
-                }, 1000);
-            }}
-            disabled>Remove</button
-        >
+                    event;
+                }}>Refresh</button
+            >
+        </div>
+        <div class="button-block-right">
+            <button
+                class="containerlist-button"
+                id="start-button"
+                onclick={() => {
+                    StartContainer(selectedIds);
+                    selectAll(false);
+                    setTimeout(() => {
+                        updateContainerList();
+                    }, 1000);
+                }}
+                disabled>Start</button
+            >
+            <button
+                class="containerlist-button"
+                id="stop-button"
+                onclick={() => {
+                    StopContainer(selectedIds);
+                    selectAll(false);
+                    setTimeout(() => {
+                        updateContainerList();
+                    }, 1000);
+                }}
+                disabled>Stop</button
+            >
+            <button
+                class="containerlist-button"
+                id="kill-button"
+                onclick={() => {
+                    KillContainer(selectedIds);
+                    selectAll(false);
+                    setTimeout(() => {
+                        updateContainerList();
+                    }, 1000);
+                }}
+                disabled>Kill</button
+            >
+            <button
+                class="containerlist-button"
+                id="restart-button"
+                onclick={() => {
+                    RestartContainer(selectedIds);
+                    selectAll(false);
+                    setTimeout(() => {
+                        updateContainerList();
+                    }, 1000);
+                }}
+                disabled>Restart</button
+            >
+            <button
+                class="containerlist-button"
+                id="pause-button"
+                onclick={() => {
+                    PauseContainer(selectedIds);
+                    selectAll(false);
+                    setTimeout(() => {
+                        updateContainerList();
+                    }, 1000);
+                }}
+                disabled>Pause</button
+            >
+            <button
+                class="containerlist-button"
+                id="resume-button"
+                onclick={() => {
+                    UnpauseContainer(selectedIds);
+                    selectAll(false);
+                    setTimeout(() => {
+                        updateContainerList();
+                    }, 1000);
+                }}
+                disabled>Resume</button
+            >
+            <button
+                class="containerlist-button"
+                id="remove-button"
+                onclick={() => {
+                    RemoveContainer(selectedIds);
+                    selectAll(false);
+                    setTimeout(() => {
+                        updateContainerList();
+                    }, 1000);
+                }}
+                disabled>Remove</button
+            >
+        </div>
     </div>
     <table class="containerlist-table">
         <thead>
@@ -366,6 +401,19 @@
 {/snippet}
 
 <style>
+    h2 {
+        font-size: 24pt;
+    }
+
+    .releaseLabel {
+        background-color: #ffffff;
+        color: #1c1c1c;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 14pt;
+        font-weight: bold;
+    }
+
     .logoHeader {
         display: block;
         max-height: 100px;
@@ -381,6 +429,12 @@
     }
 
     .button-block {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .button-block-right {
         text-align: right;
     }
 

@@ -16,5 +16,9 @@
         margin-right: 15px;
         border-radius: 15px;
         overflow-x: auto;
+        padding: 10px;
+        display: var(--display);
+        justify-content: var(--justify-content);
+        align-items: var(--align-items);
     }
 </style>

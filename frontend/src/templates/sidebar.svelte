@@ -10,7 +10,7 @@
             <li><Link to="/containers">Containers</Link></li>
         </nav>
     </div>
-    <div class="menuItem" id="version">0.0.1</div>
+    <!-- <div class="menuItem" id="version">0.0.1</div>-->
 </div>
 
 <style>
@@ -21,10 +21,10 @@
         font-variant: small-caps;
     }
 
-    #version {
+    /*#version {
         text-align: center;
         margin: auto 55px 25px 55px;
-    }
+    }*/
 
     li {
         text-align: center;
