@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./frontend/src/assets/logo_small.svg" alt="" />
+<img src="./frontend/src/assets/logo_small.svg" width="256" alt="" />
   <h1> Medovukha 🍯</h1>
   <p> Open-source web interface for Docker </p>
 </div>
