@@ -7,4 +7,5 @@ services:
       - "10015:10015"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
 

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 
 	"medovukha/api/rest/v1/types"
@@ -13,12 +14,14 @@ func CreateTestContainer(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
 		return
 	}
 	defer cli.Close()
 
 	if err := docker.CreateTestContainer(cli); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "CreateTestContainer error"})
+		fmt.Printf("CreateTestContainer error: %s\n", err.Error())
 		return
 	}
 
@@ -29,6 +32,7 @@ func GetContainerList(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
 		return
 	}
 	defer cli.Close()
@@ -36,6 +40,7 @@ func GetContainerList(c *gin.Context) {
 	conList, err := docker.GetContainerBaseInfoList(cli)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "GetContainerList error"})
+		fmt.Printf("GetContainerList error: %s\n", err.Error())
 		return
 	}
 
@@ -60,12 +65,14 @@ func PauseContainerByID(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
 		return
 	}
 	defer cli.Close()
 
 	if err := docker.PauseContainerByID(cli, containerId.Id); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "PauseContainerByID error"})
+		fmt.Printf("PauseContainerByID error: %s\n", err.Error())
 		return
 	}
 
@@ -90,12 +97,14 @@ func UnpauseContainerByID(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
 		return
 	}
 	defer cli.Close()
 
 	if err := docker.UnpauseContainerByID(cli, containerId.Id); err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "PauseContainerByID error"})
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "UnpauseContainerByID error"})
+		fmt.Printf("UnpauseContainerByID error: %s\n", err.Error())
 		return
 	}
 
@@ -120,12 +129,14 @@ func StopContainerByID(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
 		return
 	}
 	defer cli.Close()
 
 	if err := docker.StopContainerByID(cli, containerId.Id); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "StopContainerByID error"})
+		fmt.Printf("StopContainerByID error: %s\n", err.Error())
 		return
 	}
 
@@ -150,12 +161,14 @@ func KillContainerByID(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
 		return
 	}
 	defer cli.Close()
 
 	if err := docker.KillContainerByID(cli, containerId.Id); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "KillContainerByID error"})
+		fmt.Printf("KillContainerByID error: %s\n", err.Error())
 		return
 	}
 
@@ -180,12 +193,14 @@ func StartContainerByID(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
 		return
 	}
 	defer cli.Close()
 
 	if err := docker.StartContainerByID(cli, containerId.Id); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "StartContainerByID error"})
+		fmt.Printf("StartContainerByID error: %s\n", err.Error())
 		return
 	}
 
@@ -210,12 +225,14 @@ func RestartContainerByID(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
 		return
 	}
 	defer cli.Close()
 
 	if err := docker.RestartContainerByID(cli, containerId.Id); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "RestartContainerByID error"})
+		fmt.Printf("RestartContainerByID error: %s\n", err.Error())
 		return
 	}
 
@@ -240,12 +257,14 @@ func RemoveContainerByID(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
 		return
 	}
 	defer cli.Close()
 
 	if err := docker.RemoveContainerByID(cli, containerId.Id); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "RemoveContainerByID error"})
+		fmt.Printf("RemoveContainerByID error: %s\n", err.Error())
 		return
 	}
 
