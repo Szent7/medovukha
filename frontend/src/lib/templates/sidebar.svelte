@@ -4,6 +4,7 @@
 		<nav>
 			<li><a href="/">Home</a></li>
 			<li><a href="/containers">Containers</a></li>
+			<li><a href="/images">Images</a></li>
 		</nav>
 	</div>
 	<!-- <div class="menuItem" id="version">0.0.1</div>-->

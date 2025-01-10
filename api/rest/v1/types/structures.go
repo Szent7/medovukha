@@ -12,6 +12,13 @@ type ContainerBaseInfo struct {
 	IsMedovukha bool         `json:"IsMedovukha"`
 }
 
+type ImageBaseInfo struct {
+	Id      string   `json:"Id"`
+	Tags    []string `json:"Tags"`
+	Size    int64    `json:"Size"`
+	Created int64    `json:"Created"`
+}
+
 /*
 type Ports struct {
 	Ip          string `json:"Ip"`

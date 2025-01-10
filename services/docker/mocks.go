@@ -26,6 +26,11 @@ func (m *MockDockerClient) ContainerPause(ctx context.Context, containerID strin
 	return args.Error(0)
 }
 
+func (m *MockDockerClient) ImageList(ctx context.Context, options image.ListOptions) ([]image.Summary, error) {
+	args := m.Called(ctx, options)
+	return args.Get(0).([]image.Summary), args.Error(1)
+}
+
 func (m *MockDockerClient) ImagePull(ctx context.Context, refStr string, options image.PullOptions) (io.ReadCloser, error) {
 	args := m.Called(ctx, refStr, options)
 	return args.Get(0).(io.ReadCloser), args.Error(1)

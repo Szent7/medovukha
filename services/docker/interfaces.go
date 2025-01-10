@@ -13,10 +13,12 @@ import (
 
 type IDockerClient interface {
 	ContainerList(ctx context.Context, options container.ListOptions) ([]ts.Container, error)
+
 	ContainerPause(ctx context.Context, containerID string) error
 
 	ImagePull(ctx context.Context, refStr string, options image.PullOptions) (io.ReadCloser, error)
 
+	ImageList(ctx context.Context, options image.ListOptions) ([]image.Summary, error)
 	ContainerCreate(ctx context.Context, config *container.Config, hostConfig *container.HostConfig, networkingConfig *network.NetworkingConfig,
 		platform *ocispec.Platform, containerName string) (container.CreateResponse, error)
 
