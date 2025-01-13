@@ -65,6 +65,26 @@ func GetImageList(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, imgList)
 }
+
+func GetVolumeList(c *gin.Context) {
+	cli, err := docker.CreateDockerClient()
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
+		return
+	}
+	defer cli.Close()
+
+	imgList, err := docker.GetVolumeList(cli)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "GetVolumeList error"})
+		fmt.Printf("GetVolumeList error: %s\n", err.Error())
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, imgList)
+}
+
 func GetNetworkList(c *gin.Context) {
 	cli, err := docker.CreateDockerClient()
 	if err != nil {

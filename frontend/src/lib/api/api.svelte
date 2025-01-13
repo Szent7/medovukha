@@ -4,10 +4,12 @@
 		ContainerBaseInfoScheme,
 		ImageBaseInfoScheme,
 		NetworkBaseInfoScheme,
+		VolumeBaseInfoScheme,
 		type ContainerBaseInfo,
 		type ContainerIdMessage,
 		type ImageBaseInfo,
 		type NetworkBaseInfo,
+		type VolumeBaseInfo
 	} from './types.svelte';
 
 	export async function PingBack() {
@@ -33,6 +35,17 @@
 			const networks: NetworkBaseInfo = NetworkBaseInfoScheme.parse(response.data);
 			//console.log("responseData:" + containers);
 			return networks;
+		} catch (error) {
+			console.error('Error GET ContainerList:', error);
+		}
+	}
+
+	export async function GetVolumeList() {
+		try {
+			const response = await axios.get('http://localhost:10015/rest/v1/getvolumelist');
+			const volumes: VolumeBaseInfo = VolumeBaseInfoScheme.parse(response.data);
+			//console.log("responseData:" + containers);
+			return volumes;
 		} catch (error) {
 			console.error('Error GET ContainerList:', error);
 		}

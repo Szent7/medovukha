@@ -8,6 +8,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/api/types/volume"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/stretchr/testify/mock"
 )
@@ -34,6 +35,11 @@ func (m *MockDockerClient) ImageList(ctx context.Context, options image.ListOpti
 func (m *MockDockerClient) NetworkList(ctx context.Context, options network.ListOptions) ([]network.Summary, error) {
 	args := m.Called(ctx, options)
 	return args.Get(0).([]network.Summary), args.Error(1)
+}
+
+func (m *MockDockerClient) VolumeList(ctx context.Context, options volume.ListOptions) (volume.ListResponse, error) {
+	args := m.Called(ctx, options)
+	return args.Get(0).(volume.ListResponse), args.Error(1)
 }
 
 func (m *MockDockerClient) ImagePull(ctx context.Context, refStr string, options image.PullOptions) (io.ReadCloser, error) {

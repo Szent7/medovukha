@@ -1,9 +1,14 @@
 <script lang="ts" context="module">
 	import { z } from 'zod';
 
+	export const ContainerIdMessageScheme = z.object({
+		Id: z.string()
+	});
+	export type ContainerIdMessage = z.infer<typeof ContainerIdMessageScheme>;
+
 	export const ContainerBaseInfoScheme = z.array(
 		z.object({
-			id: z.string(),
+			Id: z.string(),
 			Names: z.array(z.string()),
 			Image: z.string(),
 			Ports: z.array(
@@ -22,11 +27,6 @@
 		})
 	);
 	export type ContainerBaseInfo = z.infer<typeof ContainerBaseInfoScheme>;
-
-	export const ContainerIdMessageScheme = z.object({
-		Id: z.string()
-	});
-	export type ContainerIdMessage = z.infer<typeof ContainerIdMessageScheme>;
 
 	export const ImageBaseInfoScheme = z.array(
 		z.object({
@@ -53,4 +53,13 @@
 	);
 	export type NetworkBaseInfo = z.infer<typeof NetworkBaseInfoScheme>;
 
+	export const VolumeBaseInfoScheme = z.array(
+		z.object({
+			Name: z.string(),
+			Driver: z.string(),
+			Mountpoint: z.string(),
+			Created: z.string()
+		})
+	);
+	export type VolumeBaseInfo = z.infer<typeof VolumeBaseInfoScheme>;
 </script>

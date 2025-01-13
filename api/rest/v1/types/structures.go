@@ -19,12 +19,6 @@ type ImageBaseInfo struct {
 	Created int64    `json:"Created"`
 }
 
-/*
-type Ports struct {
-	Ip          string `json:"Ip"`
-	PrivatePort uint16 `json:"PrivatePort"`
-	PublicPort  uint16 `json:"PublicPort"`
-	Type        string `json:"Type"`
 type NetworkBaseInfo struct {
 	Name          string   `json:"Name"`
 	Id            string   `json:"Id"`
@@ -36,5 +30,10 @@ type NetworkBaseInfo struct {
 	Attachable    bool     `json:"Attachable"`
 	DockerNetwork bool     `json:"DockerNetwork"`
 }
+
+type VolumeBaseInfo struct {
+	Name       string `json:"Name"`
+	Driver     string `json:"Driver"`
+	Mountpoint string `json:"Mountpoint"`
+	Created    string `json:"Created"`
 }
-*/
