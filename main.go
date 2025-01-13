@@ -41,7 +41,10 @@ func main() {
 
 			v1.POST("/restartcontainerbyid", restapi.RestartContainerByID)
 
+			v1.GET("/getvolumelist", restapi.GetVolumeList)
+			v1.GET("/getnetworklist", restapi.GetNetworkList)
 			v1.GET("/getcontainerlist", restapi.GetContainerList)
+			v1.GET("/getimagelist", restapi.GetImageList)
 		}
 	}
 

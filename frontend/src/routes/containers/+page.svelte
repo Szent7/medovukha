@@ -64,7 +64,7 @@
 	function CheckIsMedovukha(id: string): boolean {
 		let isMedovukha: boolean = false;
 		conList.forEach((container) => {
-			if (container.id == id) {
+			if (container.Id == id) {
 				isMedovukha = container.IsMedovukha;
 				return;
 			}
@@ -97,7 +97,7 @@
 		let states: string[] = new Array<string>(selectedIds.length);
 		for (let i = 0; i < selectedIds.length; i++) {
 			for (let j = 0; j < conList.length; j++) {
-				if (selectedIds[i] == conList[j].id) {
+				if (selectedIds[i] == conList[j].Id) {
 					states[i] = conList[j].State;
 				}
 			}
@@ -346,15 +346,15 @@
 				<tr>
 					<td>
 						{#if container.IsMedovukha}
-							<input type="checkbox" name="checkbox-item" id={container.id} disabled />
+							<input type="checkbox" name="checkbox-item" id={container.Id} disabled />
 						{:else}
 							<input
 								type="checkbox"
 								name="checkbox-item"
-								id={container.id}
+								id={container.Id}
 								onchange={(event) => {
 									const target = event.target as HTMLInputElement;
-									updateSelected(container.id, target.checked);
+									updateSelected(container.Id, target.checked);
 								}}
 							/>
 						{/if}

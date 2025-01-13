@@ -4,19 +4,10 @@
 	import Sidebar from '$lib/templates/sidebar.svelte';
 	import Frame from '$lib/templates/frame.svelte';
 	import logo from '../../assets/logo_small.svg';
-	import { GetContainerList, GetImageList } from '$lib/api/api.svelte';
-	import type { ContainerBaseInfo, ImageBaseInfo } from '$lib/api/types.svelte';
+	import { GetImageList } from '$lib/api/api.svelte';
+	import type { ImageBaseInfo } from '$lib/api/types.svelte';
 	import { UnixTimeFormat } from '$lib/time.svelte';
-	import { SizeConvertToMegabyte } from '$lib/size.svelte';
-	import {
-		KillContainer,
-		PauseContainer,
-		RemoveContainer,
-		StartContainer,
-		UnpauseContainer,
-		StopContainer,
-		RestartContainer
-	} from '$lib/containerActions.svelte';
+	import { SizeConvert } from '$lib/size.svelte';
 
 	let imgList: ImageBaseInfo = [];
 	let loading = true;
@@ -199,7 +190,7 @@
 					</td>
 					<td>{image.Id}</td>
 					<td>{image.Tags}</td>
-					<td>{SizeConvertToMegabyte(image.Size)} MB</td>
+					<td>{SizeConvert(image.Size)}</td>
 					<td>{UnixTimeFormat(image.Created)}</td>
 				</tr>
 			{/each}
