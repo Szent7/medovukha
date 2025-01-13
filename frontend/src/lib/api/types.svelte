@@ -37,4 +37,20 @@
 		})
 	);
 	export type ImageBaseInfo = z.infer<typeof ImageBaseInfoScheme>;
+
+	export const NetworkBaseInfoScheme = z.array(
+		z.object({
+			Name: z.string(),
+			Id: z.string(),
+			Driver: z.string(),
+			EnableIPv6: z.boolean(),
+			IPAMDriver: z.string(),
+			Subnet: z.array(z.string()),
+			Gateway: z.array(z.string()),
+			Attachable: z.boolean(),
+			DockerNetwork: z.boolean()
+		})
+	);
+	export type NetworkBaseInfo = z.infer<typeof NetworkBaseInfoScheme>;
+
 </script>

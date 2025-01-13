@@ -3,9 +3,11 @@
 	import {
 		ContainerBaseInfoScheme,
 		ImageBaseInfoScheme,
+		NetworkBaseInfoScheme,
 		type ContainerBaseInfo,
 		type ContainerIdMessage,
-		type ImageBaseInfo
+		type ImageBaseInfo,
+		type NetworkBaseInfo,
 	} from './types.svelte';
 
 	export async function PingBack() {
@@ -20,6 +22,17 @@
 			const images: ImageBaseInfo = ImageBaseInfoScheme.parse(response.data);
 			//console.log("responseData:" + containers);
 			return images;
+		} catch (error) {
+			console.error('Error GET ContainerList:', error);
+		}
+	}
+
+	export async function GetNetworkList() {
+		try {
+			const response = await axios.get('http://localhost:10015/rest/v1/getnetworklist');
+			const networks: NetworkBaseInfo = NetworkBaseInfoScheme.parse(response.data);
+			//console.log("responseData:" + containers);
+			return networks;
 		} catch (error) {
 			console.error('Error GET ContainerList:', error);
 		}

@@ -65,6 +65,25 @@ func GetImageList(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, imgList)
 }
+func GetNetworkList(c *gin.Context) {
+	cli, err := docker.CreateDockerClient()
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Docker client error"})
+		fmt.Printf("Docker client error: %s\n", err.Error())
+		return
+	}
+	defer cli.Close()
+
+	imgList, err := docker.GetNetworkList(cli)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "GetNetworkList error"})
+		fmt.Printf("GetNetworkList error: %s\n", err.Error())
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, imgList)
+}
+
 func PauseContainerByID(c *gin.Context) {
 	var containerId struct {
 		Id string `json:"id"`

@@ -3,7 +3,7 @@ package types
 import "github.com/docker/docker/api/types"
 
 type ContainerBaseInfo struct {
-	Id          string       `json:"id"`
+	Id          string       `json:"Id"`
 	Names       []string     `json:"Names"`
 	ImageName   string       `json:"Image"`
 	Ports       []types.Port `json:"Ports"`
@@ -25,5 +25,16 @@ type Ports struct {
 	PrivatePort uint16 `json:"PrivatePort"`
 	PublicPort  uint16 `json:"PublicPort"`
 	Type        string `json:"Type"`
+type NetworkBaseInfo struct {
+	Name          string   `json:"Name"`
+	Id            string   `json:"Id"`
+	Driver        string   `json:"Driver"`
+	EnableIPv6    bool     `json:"EnableIPv6"`
+	IPAMDriver    string   `json:"IPAMDriver"`
+	Subnet        []string `json:"Subnet"`
+	Gateway       []string `json:"Gateway"`
+	Attachable    bool     `json:"Attachable"`
+	DockerNetwork bool     `json:"DockerNetwork"`
+}
 }
 */

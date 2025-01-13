@@ -19,6 +19,9 @@ type IDockerClient interface {
 	ImagePull(ctx context.Context, refStr string, options image.PullOptions) (io.ReadCloser, error)
 
 	ImageList(ctx context.Context, options image.ListOptions) ([]image.Summary, error)
+
+	NetworkList(ctx context.Context, options network.ListOptions) ([]network.Summary, error)
+
 	ContainerCreate(ctx context.Context, config *container.Config, hostConfig *container.HostConfig, networkingConfig *network.NetworkingConfig,
 		platform *ocispec.Platform, containerName string) (container.CreateResponse, error)
 

@@ -31,6 +31,11 @@ func (m *MockDockerClient) ImageList(ctx context.Context, options image.ListOpti
 	return args.Get(0).([]image.Summary), args.Error(1)
 }
 
+func (m *MockDockerClient) NetworkList(ctx context.Context, options network.ListOptions) ([]network.Summary, error) {
+	args := m.Called(ctx, options)
+	return args.Get(0).([]network.Summary), args.Error(1)
+}
+
 func (m *MockDockerClient) ImagePull(ctx context.Context, refStr string, options image.PullOptions) (io.ReadCloser, error) {
 	args := m.Called(ctx, refStr, options)
 	return args.Get(0).(io.ReadCloser), args.Error(1)
