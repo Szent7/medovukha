@@ -64,8 +64,8 @@
 	function CheckIsMedovukha(id: string): boolean {
 		let isMedovukha: boolean = false;
 		conList.forEach((container) => {
-			if (container.Id == id) {
-				isMedovukha = container.IsMedovukha;
+			if (container.id == id) {
+				isMedovukha = container.isMedovukha;
 				return;
 			}
 		});
@@ -97,8 +97,8 @@
 		let states: string[] = new Array<string>(selectedIds.length);
 		for (let i = 0; i < selectedIds.length; i++) {
 			for (let j = 0; j < conList.length; j++) {
-				if (selectedIds[i] == conList[j].Id) {
-					states[i] = conList[j].State;
+				if (selectedIds[i] == conList[j].id) {
+					states[i] = conList[j].state;
 				}
 			}
 		}
@@ -345,37 +345,37 @@
 			{#each conList as container}
 				<tr>
 					<td>
-						{#if container.IsMedovukha}
-							<input type="checkbox" name="checkbox-item" id={container.Id} disabled />
+						{#if container.isMedovukha}
+							<input type="checkbox" name="checkbox-item" id={container.id} disabled />
 						{:else}
 							<input
 								type="checkbox"
 								name="checkbox-item"
-								id={container.Id}
+								id={container.id}
 								onchange={(event) => {
 									const target = event.target as HTMLInputElement;
-									updateSelected(container.Id, target.checked);
+									updateSelected(container.id, target.checked);
 								}}
 							/>
 						{/if}
 					</td>
-					<td>{container.Names[0]}</td>
-					<td class="state-{container.State}">{container.State}</td>
-					<td>{container.Image}</td>
+					<td>{container.names[0]}</td>
+					<td class="state-{container.state}">{container.state}</td>
+					<td>{container.image}</td>
 					<td>
-						{#if container.Ports.length == 0}
+						{#if container.ports.length == 0}
 							-
 						{:else}
-							{#each container.Ports as port}
-								{#if port?.PublicPort !== undefined && port?.PrivatePort !== undefined}
-									<p>{port.PublicPort}:{port.PrivatePort}</p>
+							{#each container.ports as port}
+								{#if port?.publicPort !== undefined && port?.privatePort !== undefined}
+									<p>{port.publicPort}:{port.privatePort}</p>
 								{:else}
 									-
 								{/if}
 							{/each}
 						{/if}
 					</td>
-					<td>{UnixTimeFormat(container.Created)}</td>
+					<td>{UnixTimeFormat(container.created)}</td>
 				</tr>
 			{/each}
 		</tbody>

@@ -181,17 +181,17 @@
 						<input
 							type="checkbox"
 							name="checkbox-item"
-							id={image.Id}
+							id={image.id}
 							onchange={(event) => {
 								const target = event.target as HTMLInputElement;
-								updateSelected(image.Id, target.checked);
+								updateSelected(image.id, target.checked);
 							}}
 						/>
 					</td>
-					<td>{image.Id}</td>
-					<td>{image.Tags}</td>
-					<td>{SizeConvert(image.Size)}</td>
-					<td>{UnixTimeFormat(image.Created)}</td>
+					<td>{image.id}</td>
+					<td>{image.tags}</td>
+					<td>{SizeConvert(image.size)}</td>
+					<td>{UnixTimeFormat(image.created)}</td>
 				</tr>
 			{/each}
 		</tbody>

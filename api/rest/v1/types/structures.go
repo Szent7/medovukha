@@ -1,39 +1,44 @@
 package types
 
-import "github.com/docker/docker/api/types"
-
 type ContainerBaseInfo struct {
-	Id          string       `json:"Id"`
-	Names       []string     `json:"Names"`
-	ImageName   string       `json:"Image"`
-	Ports       []types.Port `json:"Ports"`
-	Created     int64        `json:"Created"`
-	State       string       `json:"State"`
-	IsMedovukha bool         `json:"IsMedovukha"`
+	Id          string   `json:"id"`
+	Names       []string `json:"names"`
+	ImageName   string   `json:"image"`
+	Ports       []Port   `json:"ports"`
+	Created     int64    `json:"created"`
+	State       string   `json:"state"`
+	IsMedovukha bool     `json:"isMedovukha"`
+}
+
+type Port struct {
+	IP          string `json:"ip,omitempty"`
+	PrivatePort uint16 `json:"privatePort"`
+	PublicPort  uint16 `json:"publicPort,omitempty"`
+	Type        string `json:"type"`
 }
 
 type ImageBaseInfo struct {
-	Id      string   `json:"Id"`
-	Tags    []string `json:"Tags"`
-	Size    int64    `json:"Size"`
-	Created int64    `json:"Created"`
+	Id      string   `json:"id"`
+	Tags    []string `json:"tags"`
+	Size    int64    `json:"size"`
+	Created int64    `json:"created"`
 }
 
 type NetworkBaseInfo struct {
-	Name          string   `json:"Name"`
-	Id            string   `json:"Id"`
-	Driver        string   `json:"Driver"`
-	EnableIPv6    bool     `json:"EnableIPv6"`
-	IPAMDriver    string   `json:"IPAMDriver"`
-	Subnet        []string `json:"Subnet"`
-	Gateway       []string `json:"Gateway"`
-	Attachable    bool     `json:"Attachable"`
-	DockerNetwork bool     `json:"DockerNetwork"`
+	Name          string   `json:"name"`
+	Id            string   `json:"id"`
+	Driver        string   `json:"driver"`
+	EnableIPv6    bool     `json:"enableIPv6"`
+	IPAMDriver    string   `json:"ipamDriver"`
+	Subnet        []string `json:"subnet"`
+	Gateway       []string `json:"gateway"`
+	Attachable    bool     `json:"attachable"`
+	DockerNetwork bool     `json:"dockerNetwork"`
 }
 
 type VolumeBaseInfo struct {
-	Name       string `json:"Name"`
-	Driver     string `json:"Driver"`
-	Mountpoint string `json:"Mountpoint"`
-	Created    string `json:"Created"`
+	Name       string `json:"name"`
+	Driver     string `json:"driver"`
+	Mountpoint string `json:"mountpoint"`
+	Created    string `json:"created"`
 }

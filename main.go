@@ -28,23 +28,22 @@ func main() {
 	{
 		v1 := rest.Group("/v1")
 		{
-			v1.POST("/createtest", restapi.CreateTestContainer)
-			v1.POST("/pausecontainerbyid", restapi.PauseContainerByID)
-			v1.POST("/unpausecontainerbyid", restapi.UnpauseContainerByID)
-
-			v1.POST("/killcontainerbyid", restapi.KillContainerByID)
-			v1.POST("/startcontainerbyid", restapi.StartContainerByID)
-
-			v1.POST("/removecontainerbyid", restapi.RemoveContainerByID)
-
-			v1.POST("/stopcontainerbyid", restapi.StopContainerByID)
-
-			v1.POST("/restartcontainerbyid", restapi.RestartContainerByID)
-
-			v1.GET("/getvolumelist", restapi.GetVolumeList)
-			v1.GET("/getnetworklist", restapi.GetNetworkList)
-			v1.GET("/getcontainerlist", restapi.GetContainerList)
-			v1.GET("/getimagelist", restapi.GetImageList)
+			//Containers
+			v1.POST("/createTest", restapi.CreateTestContainer)
+			v1.GET("/getContainerList", restapi.GetContainerList)
+			v1.POST("/pauseContainerByid", restapi.PauseContainerByID)
+			v1.POST("/unpauseContainerById", restapi.UnpauseContainerByID)
+			v1.POST("/killContainerById", restapi.KillContainerByID)
+			v1.POST("/startContainerById", restapi.StartContainerByID)
+			v1.POST("/stopContainerById", restapi.StopContainerByID)
+			v1.POST("/restartContainerById", restapi.RestartContainerByID)
+			v1.POST("/removeContainerById", restapi.RemoveContainerByID)
+			//Images
+			v1.GET("/getImageList", restapi.GetImageList)
+			//Networks
+			v1.GET("/getNetworkList", restapi.GetNetworkList)
+			//Volumes
+			v1.GET("/getVolumeList", restapi.GetVolumeList)
 		}
 	}
 

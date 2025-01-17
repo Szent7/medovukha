@@ -180,30 +180,30 @@
 			{#each netList as network}
 				<tr>
 					<td>
-						{#if network.DockerNetwork}
-							<input type="checkbox" name="checkbox-item" id={network.Id} disabled />
+						{#if network.dockerNetwork}
+							<input type="checkbox" name="checkbox-item" id={network.id} disabled />
 						{:else}
 							<input
 								type="checkbox"
 								name="checkbox-item"
-								id={network.Id}
+								id={network.id}
 								onchange={(event) => {
 									const target = event.target as HTMLInputElement;
-									updateSelected(network.Id, target.checked);
+									updateSelected(network.id, target.checked);
 								}}
 							/>
 						{/if}
 					</td>
-					<td>{network.Name}</td>
-					<td>{network.Id}</td>
-					<td>{network.Driver}</td>
-					<td>{network.EnableIPv6}</td>
-					<td>{network.IPAMDriver}</td>
+					<td>{network.name}</td>
+					<td>{network.id}</td>
+					<td>{network.driver}</td>
+					<td>{network.enableIPv6}</td>
+					<td>{network.ipamDriver}</td>
 					<td>
-						{#if network.Subnet.length == 0}
+						{#if network.subnet.length == 0}
 							-
 						{:else}
-							{#each network.Subnet as sn}
+							{#each network.subnet as sn}
 								{#if sn !== undefined}
 									<p>{sn}</p>
 								{:else}
@@ -213,10 +213,10 @@
 						{/if}
 					</td>
 					<td>
-						{#if network.Gateway.length == 0}
+						{#if network.gateway.length == 0}
 							-
 						{:else}
-							{#each network.Gateway as gw}
+							{#each network.gateway as gw}
 								{#if gw !== undefined}
 									<p>{gw}</p>
 								{:else}
@@ -225,7 +225,7 @@
 							{/each}
 						{/if}
 					</td>
-					<td>{network.Attachable}</td>
+					<td>{network.attachable}</td>
 				</tr>
 			{/each}
 		</tbody>

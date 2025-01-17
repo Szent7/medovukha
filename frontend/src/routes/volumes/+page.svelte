@@ -179,17 +179,17 @@
 						<input
 							type="checkbox"
 							name="checkbox-item"
-							id={volume.Name}
+							id={volume.name}
 							onchange={(event) => {
 								const target = event.target as HTMLInputElement;
-								updateSelected(volume.Name, target.checked);
+								updateSelected(volume.name, target.checked);
 							}}
 						/>
 					</td>
-					<td>{volume.Name}</td>
-					<td>{volume.Driver}</td>
-					<td>{volume.Mountpoint}</td>
-					<td>{volume.Created}</td>
+					<td>{volume.name}</td>
+					<td>{volume.driver}</td>
+					<td>{volume.mountpoint}</td>
+					<td>{volume.created}</td>
 				</tr>
 			{/each}
 		</tbody>

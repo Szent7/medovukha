@@ -25,9 +25,19 @@ func GetContainerBaseInfoList(cli IDockerClient) ([]types.ContainerBaseInfo, err
 			Id:        container.ID,
 			Names:     container.Names,
 			ImageName: container.Image,
-			Ports:     container.Ports,
 			Created:   container.Created,
 			State:     container.State,
+		}
+		if len(container.Ports) == 0 {
+			conList[i].Ports = nil
+		} else {
+			conList[i].Ports = make([]types.Port, len(container.Ports))
+			for j, IPitem := range container.Ports {
+				conList[i].Ports[j].IP = IPitem.IP
+				conList[i].Ports[j].PrivatePort = IPitem.PrivatePort
+				conList[i].Ports[j].PublicPort = IPitem.PublicPort
+				conList[i].Ports[j].Type = IPitem.Type
+			}
 		}
 		if check, err := CheckIsMedovukhaId(conList[i].Id); err != nil {
 			return nil, err
