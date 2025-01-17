@@ -1,13 +1,15 @@
-package docker
+package networks
 
 import (
 	"context"
 	"medovukha/api/rest/v1/types"
 
+	dc "medovukha/services/docker"
+
 	"github.com/docker/docker/api/types/network"
 )
 
-func GetNetworkList(cli IDockerClient) ([]types.NetworkBaseInfo, error) {
+func GetNetworkList(cli dc.IDockerClient) ([]types.NetworkBaseInfo, error) {
 	ctx := context.Background()
 
 	networks, err := cli.NetworkList(ctx, network.ListOptions{})

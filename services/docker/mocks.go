@@ -17,6 +17,7 @@ type MockDockerClient struct {
 	mock.Mock
 }
 
+// Containers
 func (m *MockDockerClient) ContainerList(ctx context.Context, options container.ListOptions) ([]types.Container, error) {
 	args := m.Called(ctx, options)
 	return args.Get(0).([]types.Container), args.Error(1)
@@ -27,27 +28,8 @@ func (m *MockDockerClient) ContainerPause(ctx context.Context, containerID strin
 	return args.Error(0)
 }
 
-func (m *MockDockerClient) ImageList(ctx context.Context, options image.ListOptions) ([]image.Summary, error) {
-	args := m.Called(ctx, options)
-	return args.Get(0).([]image.Summary), args.Error(1)
-}
-
-func (m *MockDockerClient) NetworkList(ctx context.Context, options network.ListOptions) ([]network.Summary, error) {
-	args := m.Called(ctx, options)
-	return args.Get(0).([]network.Summary), args.Error(1)
-}
-
-func (m *MockDockerClient) VolumeList(ctx context.Context, options volume.ListOptions) (volume.ListResponse, error) {
-	args := m.Called(ctx, options)
-	return args.Get(0).(volume.ListResponse), args.Error(1)
-}
-
-func (m *MockDockerClient) ImagePull(ctx context.Context, refStr string, options image.PullOptions) (io.ReadCloser, error) {
-	args := m.Called(ctx, refStr, options)
-	return args.Get(0).(io.ReadCloser), args.Error(1)
-}
-
-func (m *MockDockerClient) ContainerCreate(ctx context.Context, config *container.Config, hostConfig *container.HostConfig, networkingConfig *network.NetworkingConfig, platform *ocispec.Platform, containerName string) (container.CreateResponse, error) {
+func (m *MockDockerClient) ContainerCreate(ctx context.Context, config *container.Config, hostConfig *container.HostConfig,
+	networkingConfig *network.NetworkingConfig, platform *ocispec.Platform, containerName string) (container.CreateResponse, error) {
 	args := m.Called(ctx, config, hostConfig, networkingConfig, platform, containerName)
 	return args.Get(0).(container.CreateResponse), args.Error(1)
 }
@@ -80,4 +62,37 @@ func (m *MockDockerClient) ContainerRestart(ctx context.Context, containerID str
 func (m *MockDockerClient) ContainerStop(ctx context.Context, containerID string, options container.StopOptions) error {
 	args := m.Called(ctx, containerID, options)
 	return args.Error(0)
+}
+
+// Images
+func (m *MockDockerClient) ImagePull(ctx context.Context, refStr string, options image.PullOptions) (io.ReadCloser, error) {
+	args := m.Called(ctx, refStr, options)
+	return args.Get(0).(io.ReadCloser), args.Error(1)
+}
+
+func (m *MockDockerClient) ImageList(ctx context.Context, options image.ListOptions) ([]image.Summary, error) {
+	args := m.Called(ctx, options)
+	return args.Get(0).([]image.Summary), args.Error(1)
+}
+
+func (m *MockDockerClient) ImageRemove(ctx context.Context, imageID string, options image.RemoveOptions) ([]image.DeleteResponse, error) {
+	args := m.Called(ctx, imageID, options)
+	return args.Get(0).([]image.DeleteResponse), args.Error(1)
+}
+
+func (m *MockDockerClient) ImageBuild(ctx context.Context, buildContext io.Reader, options types.ImageBuildOptions) (types.ImageBuildResponse, error) {
+	args := m.Called(ctx, buildContext, options)
+	return args.Get(0).(types.ImageBuildResponse), args.Error(1)
+}
+
+// Networks
+func (m *MockDockerClient) NetworkList(ctx context.Context, options network.ListOptions) ([]network.Summary, error) {
+	args := m.Called(ctx, options)
+	return args.Get(0).([]network.Summary), args.Error(1)
+}
+
+// Volumes
+func (m *MockDockerClient) VolumeList(ctx context.Context, options volume.ListOptions) (volume.ListResponse, error) {
+	args := m.Called(ctx, options)
+	return args.Get(0).(volume.ListResponse), args.Error(1)
 }

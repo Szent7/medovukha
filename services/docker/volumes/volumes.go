@@ -1,13 +1,15 @@
-package docker
+package volumes
 
 import (
 	"context"
 	"medovukha/api/rest/v1/types"
 
+	dc "medovukha/services/docker"
+
 	"github.com/docker/docker/api/types/volume"
 )
 
-func GetVolumeList(cli IDockerClient) ([]types.VolumeBaseInfo, error) {
+func GetVolumeList(cli dc.IDockerClient) ([]types.VolumeBaseInfo, error) {
 	ctx := context.Background()
 
 	volumes, err := cli.VolumeList(ctx, volume.ListOptions{})

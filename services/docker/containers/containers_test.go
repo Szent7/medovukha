@@ -1,4 +1,4 @@
-package docker
+package containers
 
 import (
 	"context"
@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	dc "medovukha/services/docker"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -19,7 +21,7 @@ import (
 )
 
 func TestCreateTestContainer(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	hostConfig := &container.HostConfig{
 		PortBindings: nat.PortMap{
@@ -83,7 +85,7 @@ func TestCreateTestContainer(t *testing.T) {
 }
 
 func TestGetContainerBaseInfoList(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: container found
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{
@@ -113,7 +115,7 @@ func TestGetContainerBaseInfoList(t *testing.T) {
 }
 
 func TestPauseContainerByID(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: container found and paused
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{
@@ -151,7 +153,7 @@ func TestPauseContainerByID(t *testing.T) {
 }
 
 func TestUnpauseContainerByID(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: container found and paused
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{
@@ -189,7 +191,7 @@ func TestUnpauseContainerByID(t *testing.T) {
 }
 
 func TestKillContainerByID(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: container found and killed
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{
@@ -227,7 +229,7 @@ func TestKillContainerByID(t *testing.T) {
 }
 
 func TestStopContainerByID(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: container found and stopped
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{
@@ -265,7 +267,7 @@ func TestStopContainerByID(t *testing.T) {
 }
 
 func TestStartContainerByID(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: container found and started
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{
@@ -303,7 +305,7 @@ func TestStartContainerByID(t *testing.T) {
 }
 
 func TestRestartContainerByID(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: container found and restarted
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{
@@ -341,7 +343,7 @@ func TestRestartContainerByID(t *testing.T) {
 }
 
 func TestRemoveContainerByID(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: container found and started
 	mockClient.On("ContainerList", context.Background(), container.ListOptions{All: true}).Return([]types.Container{

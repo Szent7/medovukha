@@ -1,4 +1,4 @@
-package docker
+package volumes
 
 import (
 	"context"
@@ -6,12 +6,14 @@ import (
 	ts "medovukha/api/rest/v1/types"
 	"testing"
 
+	dc "medovukha/services/docker"
+
 	"github.com/docker/docker/api/types/volume"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetVolumeList(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: volume found
 	mockClient.On("VolumeList", context.Background(), volume.ListOptions{}).Return(volume.ListResponse{

@@ -1,4 +1,4 @@
-package docker
+package networks
 
 import (
 	"context"
@@ -6,12 +6,14 @@ import (
 	ts "medovukha/api/rest/v1/types"
 	"testing"
 
+	dc "medovukha/services/docker"
+
 	"github.com/docker/docker/api/types/network"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetNetworkList(t *testing.T) {
-	mockClient := new(MockDockerClient)
+	mockClient := new(dc.MockDockerClient)
 
 	// test: network found
 	mockClient.On("NetworkList", context.Background(), network.ListOptions{}).Return([]network.Summary{

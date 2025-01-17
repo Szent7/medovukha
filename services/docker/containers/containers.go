@@ -1,9 +1,11 @@
-package docker
+package containers
 
 import (
 	"context"
 	"fmt"
 	"medovukha/api/rest/v1/types"
+	dc "medovukha/services/docker"
+	image "medovukha/services/docker/images"
 	"os"
 	"strings"
 
@@ -11,7 +13,7 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-func GetContainerBaseInfoList(cli IDockerClient) ([]types.ContainerBaseInfo, error) {
+func GetContainerBaseInfoList(cli dc.IDockerClient) ([]types.ContainerBaseInfo, error) {
 	ctx := context.Background()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
@@ -49,12 +51,12 @@ func GetContainerBaseInfoList(cli IDockerClient) ([]types.ContainerBaseInfo, err
 	return conList, nil
 }
 
-func CreateTestContainer(cli IDockerClient) error {
+func CreateTestContainer(cli dc.IDockerClient) error {
 	ctx := context.Background()
 
 	imageName := "docker/welcome-to-docker"
 
-	if err := PullImage(cli, ctx, imageName); err != nil {
+	if err := image.PullImage(cli, ctx, imageName); err != nil {
 		return err
 	}
 
@@ -86,7 +88,7 @@ func CreateTestContainer(cli IDockerClient) error {
 	return nil
 }
 
-func PauseContainerByID(cli IDockerClient, id string) error {
+func PauseContainerByID(cli dc.IDockerClient, id string) error {
 	ctx := context.Background()
 
 	conList, err := GetContainerBaseInfoList(cli)
@@ -107,7 +109,7 @@ func PauseContainerByID(cli IDockerClient, id string) error {
 	return types.ErrContainerNotFound
 }
 
-func UnpauseContainerByID(cli IDockerClient, id string) error {
+func UnpauseContainerByID(cli dc.IDockerClient, id string) error {
 	ctx := context.Background()
 
 	conList, err := GetContainerBaseInfoList(cli)
@@ -128,7 +130,7 @@ func UnpauseContainerByID(cli IDockerClient, id string) error {
 	return types.ErrContainerNotFound
 }
 
-func KillContainerByID(cli IDockerClient, id string) error {
+func KillContainerByID(cli dc.IDockerClient, id string) error {
 	ctx := context.Background()
 
 	conList, err := GetContainerBaseInfoList(cli)
@@ -149,7 +151,7 @@ func KillContainerByID(cli IDockerClient, id string) error {
 	return types.ErrContainerNotFound
 }
 
-func StartContainerByID(cli IDockerClient, id string) error {
+func StartContainerByID(cli dc.IDockerClient, id string) error {
 	ctx := context.Background()
 
 	conList, err := GetContainerBaseInfoList(cli)
@@ -170,7 +172,7 @@ func StartContainerByID(cli IDockerClient, id string) error {
 	return types.ErrContainerNotFound
 }
 
-func RestartContainerByID(cli IDockerClient, id string) error {
+func RestartContainerByID(cli dc.IDockerClient, id string) error {
 	ctx := context.Background()
 
 	conList, err := GetContainerBaseInfoList(cli)
@@ -191,7 +193,7 @@ func RestartContainerByID(cli IDockerClient, id string) error {
 	return types.ErrContainerNotFound
 }
 
-func StopContainerByID(cli IDockerClient, id string) error {
+func StopContainerByID(cli dc.IDockerClient, id string) error {
 	ctx := context.Background()
 
 	conList, err := GetContainerBaseInfoList(cli)
@@ -212,7 +214,7 @@ func StopContainerByID(cli IDockerClient, id string) error {
 	return types.ErrContainerNotFound
 }
 
-func RemoveContainerByID(cli IDockerClient, id string) error {
+func RemoveContainerByID(cli dc.IDockerClient, id string) error {
 	ctx := context.Background()
 
 	conList, err := GetContainerBaseInfoList(cli)
