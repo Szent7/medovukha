@@ -11,16 +11,18 @@
 			id: z.string(),
 			names: z.array(z.string()),
 			image: z.string(),
-			ports: z.array(
-				z
-					.object({
-						ip: z.string(),
-						privatePort: z.number(),
-						publicPort: z.number(),
-						type: z.string()
-					})
-					.optional()
-			),
+			ports: z
+				.array(
+					z
+						.object({
+							ip: z.string(),
+							privatePort: z.number(),
+							publicPort: z.number(),
+							type: z.string()
+						})
+						.optional()
+				)
+				.nullable(),
 			created: z.number(),
 			state: z.string(),
 			isMedovukha: z.boolean()

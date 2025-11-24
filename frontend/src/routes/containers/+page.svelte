@@ -363,7 +363,7 @@
 					<td class="state-{container.state}">{container.state}</td>
 					<td>{container.image}</td>
 					<td>
-						{#if container.ports.length == 0}
+						{#if container.ports == null || container.ports.length == 0}
 							-
 						{:else}
 							{#each container.ports as port}
