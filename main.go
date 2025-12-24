@@ -40,11 +40,13 @@ func main() {
 			v1.POST("/removeContainerById", restapi.RemoveContainerByID)
 			//Images
 			v1.GET("/getImageList", restapi.GetImageList)
-			v1.POST("/buildImageByRepo", restapi.BuildImageByRepo)
+			//v1.POST("/buildImageByRepo", restapi.BuildImageByRepo)
 			//Networks
 			v1.GET("/getNetworkList", restapi.GetNetworkList)
 			//Volumes
 			v1.GET("/getVolumeList", restapi.GetVolumeList)
+			//Deploy
+			v1.POST("/createFromGit", restapi.CreateFromGit)
 		}
 	}
 

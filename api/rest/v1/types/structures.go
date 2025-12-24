@@ -42,3 +42,10 @@ type VolumeBaseInfo struct {
 	Mountpoint string `json:"mountpoint"`
 	Created    string `json:"created"`
 }
+
+type DeployFromGit struct {
+	URL           string `json:"url"`
+	Dockerfile    string `json:"dockerfile"`
+	DockerCompose string `json:"docker_compose"`
+	DockerRun     string `json:"docker_run"`
+}

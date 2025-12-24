@@ -3,13 +3,16 @@ package containers
 import (
 	"context"
 	"fmt"
+	"log"
 	"medovukha/api/rest/v1/types"
 	dc "medovukha/services/docker"
 	image "medovukha/services/docker/images"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/go-connections/nat"
 )
 
@@ -49,6 +52,45 @@ func GetContainerBaseInfoList(cli dc.IDockerClient) ([]types.ContainerBaseInfo, 
 	}
 
 	return conList, nil
+}
+
+func ExecDockerRun(dockerRunCommand string) error {
+	ctx := context.Background()
+
+	args := strings.Split(dockerRunCommand, " ")
+	if len(args) < 2 {
+		return fmt.Errorf("wrong dockerRunCommand syntax: %v", args)
+	}
+
+	cmd := exec.CommandContext(ctx, "docker", args[1:]...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("run failed: %s", err.Error())
+	}
+
+	return nil
+}
+
+func ExecDockerComposeUp(composeFilepath string) error {
+	ctx := context.Background()
+
+	args := []string{
+		"compose",
+		"-f", composeFilepath,
+		"up", "-d",
+	}
+
+	cmd := exec.CommandContext(ctx, "docker", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("composeUp failed: %s", err.Error())
+	}
+
+	return nil
 }
 
 func CreateTestContainer(cli dc.IDockerClient) error {
@@ -237,6 +279,40 @@ func RemoveContainerByID(cli dc.IDockerClient, id string) error {
 	}
 	fmt.Println("Not found: ", id)
 	return types.ErrContainerNotFound
+}
+
+func RemoveContainerByImage(ctx context.Context, cli dc.IDockerClient, imageTag string) error {
+	f := filters.NewArgs()
+	f.Add("ancestor", imageTag)
+
+	containers, err := cli.ContainerList(ctx, container.ListOptions{
+		All:     true,
+		Filters: f,
+	})
+	if err != nil {
+		return fmt.Errorf("cannot list containers for image %q: %s", imageTag, err.Error())
+	}
+
+	if len(containers) == 0 {
+		return nil
+	}
+
+	for _, ctr := range containers {
+		if ctr.State == container.StateRunning {
+			if err := cli.ContainerStop(ctx, ctr.ID,
+				container.StopOptions{Timeout: nil}); err != nil {
+				return fmt.Errorf("cannot stop container %s: %s", ctr.ID, err.Error())
+			}
+		}
+
+		if err := cli.ContainerRemove(ctx, ctr.ID, container.RemoveOptions{Force: true}); err != nil {
+			return fmt.Errorf("cannot remove container %s: %s", ctr.ID, err.Error())
+		}
+
+		log.Printf("container %s removed\n", ctr.ID)
+	}
+
+	return nil
 }
 
 func CheckIsMedovukhaId(id string) (bool, error) {

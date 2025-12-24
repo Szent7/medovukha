@@ -1,6 +1,8 @@
 package images
 
 import (
+	"archive/tar"
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -8,10 +10,11 @@ import (
 	ts "medovukha/api/rest/v1/types"
 	dc "medovukha/services/docker"
 	"os"
+	"os/exec"
+	"path/filepath"
 
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/build"
 	"github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/pkg/archive"
 )
 
 func PullImage(cli dc.IDockerClient, ctx context.Context, imageName string) error {
@@ -85,6 +88,67 @@ func GetImageListIDs(cli dc.IDockerClient) ([]string, error) {
 	return imageListIds, nil
 }
 
+func RemoveImageByTag(ctx context.Context, cli dc.IDockerClient, imageTag string) error {
+	images, err := cli.ImageList(ctx, image.ListOptions{All: true})
+	if err != nil {
+		return fmt.Errorf("cannot list images: %s", err.Error())
+	}
+
+	found := false
+	for _, img := range images {
+		for _, tag := range img.RepoTags {
+			if tag == imageTag {
+				found = true
+				break
+			}
+		}
+		if found {
+			break
+		}
+	}
+
+	if !found {
+		return nil
+	}
+
+	_, err = cli.ImageRemove(ctx, imageTag, image.RemoveOptions{
+		Force:         true,
+		PruneChildren: true,
+	})
+	if err != nil {
+		return fmt.Errorf("cannot remove image %s: %s", imageTag, err.Error())
+	}
+
+	log.Printf("image %q removed\n", imageTag)
+
+	return nil
+}
+
+func BuildImageNew(cli dc.IDockerClient, path string, tags []string) (string, error) {
+	ctx := context.Background()
+
+	if len(tags) < 1 {
+		return "", ts.ErrEmptyTags
+	}
+
+	args := []string{
+		"build",
+		"--pull",
+		"-t", tags[0],
+		path,
+	}
+
+	cmd := exec.CommandContext(ctx, "docker", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("build failed: %s", err.Error())
+	}
+
+	return GetImageIDFromTag(cli, tags[0])
+}
+
 // ? Perhaps archiving should be made into a separate function (ITarArchiver)
 func BuildImage(cli dc.IDockerClient, tarArchiver ITarArchiver, path string, tags []string) (string, error) {
 	ctx := context.Background()
@@ -93,16 +157,17 @@ func BuildImage(cli dc.IDockerClient, tarArchiver ITarArchiver, path string, tag
 		return "", ts.ErrEmptyTags
 	}
 
-	tar, err := tarArchiver.TarWithOptions(path, &archive.TarOptions{})
-	if err != nil {
-		return "", err
+	buf := new(bytes.Buffer)
+	if err := tarDirectory(path, buf); err != nil {
+		return "", fmt.Errorf("tar directory: %w", err)
 	}
-	defer tar.Close()
 
-	out, err := cli.ImageBuild(ctx, tar, types.ImageBuildOptions{
-		Dockerfile: "Dockerfile",
-		Tags:       tags,
-		Remove:     true,
+	out, err := cli.ImageBuild(ctx, buf, build.ImageBuildOptions{
+		Dockerfile:  "Dockerfile",
+		Tags:        tags,
+		Remove:      true,
+		ForceRemove: true,
+		NoCache:     true,
 	})
 	if err != nil {
 		fmt.Println(err.Error())
@@ -118,7 +183,7 @@ func BuildImage(cli dc.IDockerClient, tarArchiver ITarArchiver, path string, tag
 // returns a list of undeleted images
 // if all images have been deleted, the list will be empty
 func RemoveIntermediateImages(client dc.IDockerClient, IDs []string) []string {
-	opt := image.RemoveOptions{Force: true}
+	opt := image.RemoveOptions{Force: true, PruneChildren: true}
 	var err error = nil
 	undeletedIDs := make([]string, 0, len(IDs))
 	for _, image := range IDs {
@@ -131,4 +196,53 @@ func RemoveIntermediateImages(client dc.IDockerClient, IDs []string) []string {
 		}
 	}
 	return undeletedIDs
+}
+
+func tarDirectory(srcDir string, out io.Writer) error {
+	tw := tar.NewWriter(out)
+	defer tw.Close()
+
+	absSrc, err := filepath.Abs(srcDir)
+	if err != nil {
+		return err
+	}
+
+	return filepath.Walk(absSrc, func(file string, fi os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		relPath, err := filepath.Rel(absSrc, file)
+		if err != nil {
+			return err
+		}
+
+		header, err := tar.FileInfoHeader(fi, fi.Name())
+		if err != nil {
+			return err
+		}
+
+		if fi.IsDir() {
+			header.Name = relPath + "/"
+		} else {
+			header.Name = relPath
+		}
+
+		if err := tw.WriteHeader(header); err != nil {
+			return err
+		}
+
+		if !fi.IsDir() {
+			f, err := os.Open(file)
+			if err != nil {
+				return err
+			}
+			defer f.Close()
+
+			if _, err := io.Copy(tw, f); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
